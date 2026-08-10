@@ -1,0 +1,134 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Subject;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class SubjectController extends Controller
+{
+    /**
+     * Display a listing of the user's subjects based on term filters.
+     */
+    public function index(Request $request)
+    {
+        // Get the current filter from the URL, defaulting to 'all' if none exists
+        $currentFilter = $request->query('filter', 'all');
+
+        // Build the query using Eloquent's conditional 'when' statements
+        $subjects = Auth::user()->subjects()
+            ->withCount('todos')
+            ->when($currentFilter === '1st-sem', function ($query) {
+                $query->where('semester', '1st Sem')->where('is_archived', false);
+            })
+            ->when($currentFilter === '2nd-sem', function ($query) {
+                $query->where('semester', '2nd Sem')->where('is_archived', false);
+            })
+            ->when($currentFilter === 'archived', function ($query) {
+                $query->where('is_archived', true);
+            })
+            ->when($currentFilter === 'all', function ($query) {
+                // For 'all', we just want to hide archived subjects
+                $query->where('is_archived', false);
+            })
+            ->orderBy('code', 'asc')
+            ->get();
+
+        // Pass both the subjects and the active filter to the Blade view
+        return view('subject.index', compact('subjects', 'currentFilter'));
+    }
+
+    /**
+     * Store a newly created subject in storage.
+     */
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'code'        => 'required|string|max:20|unique:subjects,code,NULL,id,user_id,' . Auth::id(),
+            'name'        => 'required|string|max:150',
+            'semester'    => 'required|string|in:1st Sem,2nd Sem',
+            'color_theme' => 'nullable|string|max:7',
+        ], [
+            'code.unique' => 'You have already added this subject code to your tracker!',
+        ]);
+
+        Auth::user()->subjects()->create([
+            'code'        => strtoupper($validated['code']),
+            'name'        => $validated['name'],
+            'semester'    => $validated['semester'],
+            'color_theme' => $validated['color_theme'] ?? '#64748b',
+        ]);
+
+        return redirect()->route('subject.index')->with('success', 'Subject registered successfully!');
+    }
+
+    /**
+     * Update the specified subject profile using standard ID tracking.
+     */
+    public function update(Request $request, $id)
+    {
+        $subject = Subject::findOrFail($id);
+
+        // Prevent cross-user data tampering
+        abort_if($subject->user_id !== Auth::id(), 403);
+
+        $validated = $request->validate([
+            'code'        => 'required|string|max:20|unique:subjects,code,' . $id . ',id,user_id,' . Auth::id(),
+            'name'        => 'required|string|max:150',
+            'semester'    => 'required|string|in:1st Sem,2nd Sem',
+            'color_theme' => 'required|string|max:7',
+        ]);
+
+        $subject->update([
+            'code'        => strtoupper($validated['code']),
+            'name'        => $validated['name'],
+            'semester'    => $validated['semester'],
+            'color_theme' => $validated['color_theme'],
+        ]);
+
+        return redirect()->route('subject.index')->with('success', 'Subject updated successfully!');
+    }
+
+    /**
+     * Remove the specified subject and its linked tasks from storage.
+     */
+    public function destroy($id)
+    {
+        $subject = Subject::findOrFail($id);
+
+        // Prevent cross-user data tampering
+        abort_if($subject->user_id !== Auth::id(), 403);
+
+        $subject->delete();
+
+        return redirect()->route('subject.index')->with('success', 'Subject deleted successfully!');
+    }
+
+    /**
+     * Bypassed page redirect handler (Modal implementation is on index view instead)
+     */
+    public function edit(Subject $subject)
+    {
+        abort(404);
+    }
+
+    /**
+     * Toggle the archived status of the specified subject.
+     */
+    public function toggleArchive($id)
+    {
+        $subject = Subject::findOrFail($id);
+
+        // Prevent cross-user data tampering
+        abort_if($subject->user_id !== Auth::id(), 403);
+
+        $subject->update([
+            'is_archived' => !$subject->is_archived,
+        ]);
+
+        $status = $subject->is_archived ? 'archived' : 'restored';
+
+        return redirect()->route('subject.index')->with('success', "Subject {$status} successfully!");
+    }
+}
