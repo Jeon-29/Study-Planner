@@ -51,7 +51,6 @@
     <!-- ========================================================================= -->
     <!-- 2. FULL-HEIGHT HERO ANCHOR: NEXT UP TASK (Deep Indigo Distinction)        -->
     <!-- ========================================================================= -->
-    <!-- Changed from black to a rich midnight indigo so it doesn't clash with the dark date block -->
     <div
         class="mb-6 relative overflow-hidden bg-gradient-to-br from-indigo-950 via-slate-900 to-indigo-950 text-white p-5 rounded-[24px] shadow-xl border border-indigo-800/50">
 
@@ -155,12 +154,21 @@
                         @php
                             $nextStartTime = \Carbon\Carbon::parse($nextClassSchedule->start_time);
                             $nextEndTime = \Carbon\Carbon::parse($nextClassSchedule->end_time);
+                            $nextTypeTag = $nextClassSchedule->type ?? null;
+                            $nextIsExam = in_array(strtolower(trim($nextTypeTag)), ['prelims', 'midfinals', 'midterm', 'final', 'prelim', 'midterms', 'finals']);
                         @endphp
                         <div class="pt-1 flex items-center justify-between">
                             <div class="flex flex-col">
-                                <span class="text-[9px] font-black text-indigo-600 uppercase tracking-wider">
-                                    Up Next ({{ $nextClassDayLabel }})
-                                </span>
+                                <div class="flex items-center space-x-1.5">
+                                    <span class="text-[9px] font-black text-indigo-600 uppercase tracking-wider">
+                                        Up Next ({{ $nextClassDayLabel }})
+                                    </span>
+                                    @if ($nextTypeTag)
+                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[8px] font-black {{ $nextIsExam ? 'bg-pink-100 text-pink-700' : 'bg-indigo-100 text-indigo-800' }} uppercase">
+                                            {{ $nextTypeTag }}
+                                        </span>
+                                    @endif
+                                </div>
                                 <span class="text-xs font-black text-stone-800 mt-0.5">
                                     {{ $nextStartTime->format('g:i A') }} – {{ $nextEndTime->format('g:i A') }}
                                 </span>
@@ -181,18 +189,38 @@
             @else
                 <!-- ACTIVE CLASS LIST STATE -->
                 <div class="space-y-2">
-                    @foreach($todaysSchedules as $index => $schedule)
+                    @php
+                        // Filter schedules to prevent duplicate time slots:
+                        // Prioritize exam/term types (Prelims, Midterms, Finals) over regular lecture/lab if they share the same start time.
+                        $uniqueSchedules = $todaysSchedules->groupBy(function ($item) {
+                            return $item->subject_id . '-' . $item->start_time;
+                        })->map(function ($group) {
+                            if ($group->count() > 1) {
+                                $examSchedule = $group->first(function ($item) {
+                                    $t = strtolower(trim($item->type ?? ''));
+                                    return in_array($t, ['prelims', 'midterms', 'finals', 'prelim', 'midterm', 'final']);
+                                });
+                                if ($examSchedule) {
+                                    return $examSchedule;
+                                }
+                            }
+                            return $group->first();
+                        })->values()->take(2);
+                    @endphp
+
+                    @foreach($uniqueSchedules as $index => $schedule)
                         @php
                             $startTime = \Carbon\Carbon::parse($schedule->start_time);
                             $endTime = \Carbon\Carbon::parse($schedule->end_time);
                             $now = now();
                             $isInProgress = $now->between($startTime, $endTime);
-                            $isUpcoming = $now->lt($startTime);
+                            $typeTag = $schedule->type ?? null;
+                            $isExamType = in_array(strtolower(trim($typeTag)), ['prelims', 'midterms', 'finals', 'prelim', 'midterm', 'final']);
                         @endphp
 
                         <div class="flex items-center justify-between text-xs">
                             <div class="flex flex-col">
-                                <div class="flex items-center space-x-1.5">
+                                <div class="flex items-center space-x-1.5 flex-wrap gap-y-1">
                                     <span class="font-black text-stone-800">
                                         {{ $startTime->format('g:i A') }} – {{ $endTime->format('g:i A') }}
                                     </span>
@@ -201,16 +229,18 @@
                                         <span class="inline-flex items-center px-2 py-0.5 rounded-lg text-[9px] font-black bg-emerald-100 text-emerald-700 border border-emerald-300 animate-pulse">
                                             ● In Progress
                                         </span>
-                                    @elseif ($isUpcoming)
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded-lg text-[9px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
-                                            Upcoming
+                                    @endif
+
+                                    @if ($typeTag)
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-lg text-[9px] font-extrabold {{ $isExamType ? 'bg-pink-100 text-pink-700 border border-pink-300' : 'bg-indigo-50 text-indigo-700 border border-indigo-200' }} uppercase tracking-wide">
+                                            {{ $typeTag }}
                                         </span>
                                     @endif
                                 </div>
                                 <span class="text-[10px] font-bold text-indigo-600 mt-0.5">{{ $schedule->subject->name ?? 'Class Session' }}</span>
                             </div>
 
-                            <span class="text-stone-700 font-black text-[10px] bg-white/90 px-2.5 py-1 rounded-xl border border-stone-200 shadow-sm">
+                            <span class="text-stone-700 font-black text-[10px] bg-white/90 px-2.5 py-1 rounded-xl border border-stone-200 shadow-sm shrink-0">
                                 {{ $schedule->room ?? 'TBA' }}
                             </span>
                         </div>
