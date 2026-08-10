@@ -75,7 +75,7 @@
             @php
                 // Utilizing Blade to define our core glassmorphism classes once, keeping the loop clean
                 $baseGlassStyle =
-                    'relative flex flex-col justify-between min-h-[120px] p-6 rounded-[24px] backdrop-blur-xl border border-white/40 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl box-border overflow-hidden';
+                    'relative flex flex-col justify-between min-h-[125px] p-6 rounded-[24px] backdrop-blur-xl border border-white/40 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl box-border overflow-hidden cursor-pointer group';
             @endphp
 
             @forelse ($subjects as $subject)
@@ -99,37 +99,42 @@
                     $gradientClass = $bgGradients[$theme] ?? 'from-blue-300/80 to-blue-500/70';
                 @endphp
 
-                <!-- Upward Hover Liquid Glass Card -->
-                <div class="{{ $baseGlassStyle }} bg-gradient-to-br {{ $gradientClass }}">
+                <!-- Clickable Upward Hover Liquid Glass Card -->
+                <div class="{{ $baseGlassStyle }} bg-gradient-to-br {{ $gradientClass }}"
+                    onclick="window.location.href='{{ route('subject.show', $subject->id) }}'">
 
                     <!-- Internal Ambient Highlight -->
                     <div class="absolute -top-10 -right-10 w-32 h-32 bg-white/20 rounded-full blur-2xl pointer-events-none">
                     </div>
 
-                    <!-- ROW 1: Subject Title -->
-                    <div class="flex w-full box-border relative z-10">
-                        <h2 class="text-[1.35rem] font-bold text-white m-0 leading-tight drop-shadow-sm w-full break-words">
+                    <!-- ROW 1: Subject Title & View More Indicator -->
+                    <div class="flex items-start justify-between gap-3 w-full box-border relative z-10">
+                        <h2 class="text-[1.35rem] font-bold text-white m-0 leading-tight drop-shadow-sm break-words flex-1">
                             {{ $subject->name }}
                         </h2>
+                        <span class="inline-flex items-center gap-0.5 text-[0.7rem] font-bold text-white/90 group-hover:text-white transition-colors shrink-0 pt-1">
+                            View More
+                            <span class="material-icons-round text-[0.95rem] transition-transform duration-200 group-hover:translate-x-1">arrow_forward</span>
+                        </span>
                     </div>
 
-                    <!-- ROW 2: Code, Counter Stats & Isolated Floating Actions -->
+                    <!-- ROW 2: Code, Counter Stats & Right Action Management -->
                     <div class="flex justify-between items-end w-full mt-4 relative z-10">
                         <!-- Left Stats Stack -->
                         <div class="flex flex-col gap-1">
                             <span class="font-mono text-xs font-bold text-white/80 uppercase tracking-widest">
                                 {{ $subject->code }}
                             </span>
-                            <span class="text-sm font-semibold text-white/95 drop-shadow-sm">
+                            <span class="text-xs font-semibold text-white/95 drop-shadow-sm">
                                 {{ $subject->todos_count ?? 0 }} To-Dos
                             </span>
                         </div>
 
-                        <!-- Right Action Management Shell -->
-                        <div class="flex items-center gap-2">
+                        <!-- Right Action Management Shell (Stop Propagation prevents triggering card link) -->
+                        <div class="flex items-center gap-2" onclick="event.stopPropagation()">
                             <!-- Edit Button -->
                             <button type="button"
-                                onclick="openEditModal({{ $subject->id }}, '{{ $subject->code }}', '{{ addslashes($subject->name) }}', '{{ $subject->semester }}', '{{ $theme }}')"
+                                onclick="openEditModal({{ $subject->id }}, '{{ $subject->code }}', '{{ addslashes($subject->name) }}', '{{ $subject->semester }}', '{{ $theme }}', '{{ addslashes($subject->instructor_name ?? '') }}', '{{ addslashes($subject->instructor_email ?? '') }}', '{{ addslashes($subject->consultation_hours ?? '') }}')"
                                 class="w-[34px] h-[34px] rounded-xl flex items-center justify-center text-white bg-white/20 border border-white/30 backdrop-blur-md cursor-pointer transition-colors duration-200 hover:bg-white/40 shadow-sm"
                                 title="Edit Subject">
                                 <i class="material-icons-round text-[1.1rem]">edit</i>
@@ -139,13 +144,11 @@
                             <form action="{{ route('subjects.archive', $subject->id) }}" method="POST" class="m-0">
                                 @csrf
                                 @method('PATCH')
-                                <!-- Archive / Restore Button -->
                                 <button type="button"
                                     onclick="openArchiveModal({{ $subject->id }}, '{{ addslashes($subject->name) }}', {{ $subject->is_archived ? 'true' : 'false' }})"
                                     class="w-[34px] h-[34px] rounded-xl flex items-center justify-center text-white bg-white/20 border border-white/30 backdrop-blur-md cursor-pointer transition-colors duration-200 hover:bg-amber-500/80 hover:border-amber-400 shadow-sm"
                                     title="{{ $subject->is_archived ? 'Restore Subject' : 'Archive Subject' }}">
-                                    <i
-                                        class="material-icons-round text-[1.1rem]">{{ $subject->is_archived ? 'unarchive' : 'archive' }}</i>
+                                    <i class="material-icons-round text-[1.1rem]">{{ $subject->is_archived ? 'unarchive' : 'archive' }}</i>
                                 </button>
                             </form>
 
@@ -174,13 +177,12 @@
         class="hidden fixed inset-0 bg-stone-900/10 backdrop-blur-md z-[9999] items-end justify-center px-4 pb-24 transition-opacity duration-300 opacity-0">
 
         <div id="editModalCard"
-            class="bg-white/80 backdrop-blur-2xl border border-white rounded-[2rem] w-full max-w-[384px] p-6 shadow-[0_24px_60px_rgba(0,0,0,0.12)] relative transform translate-y-8 transition-transform duration-300">
+            class="bg-white/80 backdrop-blur-2xl border border-white rounded-[2rem] w-full max-w-[384px] p-6 shadow-[0_24px_60px_rgba(0,0,0,0.12)] relative transform translate-y-8 transition-transform duration-300 max-h-[90vh] overflow-y-auto">
 
-            <div class="flex items-start justify-between mb-5">
+            <div class="flex items-start justify-between mb-4">
                 <div>
                     <h3 class="m-0 text-sm font-bold text-stone-900 tracking-tight">Edit Course Subject</h3>
-                    <p class="m-0 mt-1 text-[0.68rem] font-medium text-stone-500">Modify your dynamic core tracking cluster
-                    </p>
+                    <p class="m-0 mt-1 text-[0.68rem] font-medium text-stone-500">Modify your dynamic core tracking cluster</p>
                 </div>
                 <button type="button" onclick="closeEditModal()"
                     class="w-7 h-7 rounded-full bg-stone-100/50 border-none text-stone-500 cursor-pointer flex items-center justify-center transition-colors hover:bg-stone-200">
@@ -188,67 +190,75 @@
                 </button>
             </div>
 
-            <form id="editForm" method="POST" class="flex flex-col gap-4">
+            <form id="editForm" method="POST" class="flex flex-col gap-3">
                 @csrf
                 @method('PUT')
 
                 <div>
-                    <label
-                        class="block text-[0.625rem] font-bold text-stone-500 mb-1.5 uppercase tracking-wider pl-0.5">Course
-                        Code</label>
+                    <label class="block text-[0.625rem] font-bold text-stone-500 mb-1 uppercase tracking-wider pl-0.5">Course Code</label>
                     <input type="text" id="edit_code" name="code" required
-                        class="w-full h-12 px-4 bg-stone-100/40 border border-stone-200/60 rounded-2xl text-xs font-semibold text-stone-900 outline-none uppercase tracking-wide focus:border-indigo-400 focus:bg-white/80 transition-colors">
+                        class="w-full h-11 px-4 bg-stone-100/40 border border-stone-200/60 rounded-2xl text-xs font-semibold text-stone-900 outline-none uppercase tracking-wide focus:border-indigo-400 focus:bg-white/80 transition-colors">
                 </div>
 
                 <div>
-                    <label
-                        class="block text-[0.625rem] font-bold text-stone-500 mb-1.5 uppercase tracking-wider pl-0.5">Subject
-                        Description</label>
+                    <label class="block text-[0.625rem] font-bold text-stone-500 mb-1 uppercase tracking-wider pl-0.5">Subject Description</label>
                     <input type="text" id="edit_name" name="name" required
-                        class="w-full h-12 px-4 bg-stone-100/40 border border-stone-200/60 rounded-2xl text-xs font-medium text-stone-900 outline-none focus:border-indigo-400 focus:bg-white/80 transition-colors">
+                        class="w-full h-11 px-4 bg-stone-100/40 border border-stone-200/60 rounded-2xl text-xs font-medium text-stone-900 outline-none focus:border-indigo-400 focus:bg-white/80 transition-colors">
                 </div>
 
                 <!-- Semester -->
                 <div>
-                    <label
-                        class="block text-[0.625rem] font-bold text-stone-500 mb-1.5 uppercase tracking-wider pl-0.5">Academic
-                        Semester</label>
+                    <label class="block text-[0.625rem] font-bold text-stone-500 mb-1 uppercase tracking-wider pl-0.5">Academic Semester</label>
                     <select id="edit_semester" name="semester" required
-                        class="w-full h-12 px-4 bg-stone-100/40 border border-stone-200/60 rounded-2xl text-xs font-semibold text-stone-900 outline-none focus:border-indigo-400 focus:bg-white/80 transition-colors">
+                        class="w-full h-11 px-4 bg-stone-100/40 border border-stone-200/60 rounded-2xl text-xs font-semibold text-stone-900 outline-none focus:border-indigo-400 focus:bg-white/80 transition-colors">
                         <option value="1st Sem">1st Semester</option>
                         <option value="2nd Sem">2nd Semester</option>
                     </select>
                 </div>
 
+                <!-- Instructor Details Section -->
+                <div class="pt-1 border-t border-stone-200/60">
+                    <span class="block text-[0.625rem] font-bold text-indigo-950 mb-2 uppercase tracking-wider pt-2">Instructor Details</span>
+
+                    <div class="flex flex-col gap-2.5">
+                        <input type="text" id="edit_instructor_name" name="instructor_name" placeholder="Professor Name (e.g., Dr. Jane Doe)"
+                            class="w-full h-11 px-4 bg-stone-100/40 border border-stone-200/60 rounded-2xl text-xs font-medium text-stone-900 outline-none focus:border-indigo-400 focus:bg-white/80 transition-colors">
+
+                        <input type="email" id="edit_instructor_email" name="instructor_email" placeholder="Email Address"
+                            class="w-full h-11 px-4 bg-stone-100/40 border border-stone-200/60 rounded-2xl text-xs font-medium text-stone-900 outline-none focus:border-indigo-400 focus:bg-white/80 transition-colors">
+
+                        <input type="text" id="edit_consultation_hours" name="consultation_hours" placeholder="Consultation Hours (e.g., Tue/Thu 1:00 PM - 3:00 PM)"
+                            class="w-full h-11 px-4 bg-stone-100/40 border border-stone-200/60 rounded-2xl text-xs font-medium text-stone-900 outline-none focus:border-indigo-400 focus:bg-white/80 transition-colors">
+                    </div>
+                </div>
+
                 <!-- Modern Horizontal Color Strip Layer -->
-                <div>
-                    <label class="block text-[0.625rem] font-bold text-stone-500 mb-2 uppercase tracking-wider pl-0.5">Color
-                        Theme Accent</label>
+                <div class="pt-1 border-t border-stone-200/60">
+                    <label class="block text-[0.625rem] font-bold text-stone-500 mb-2 uppercase tracking-wider pl-0.5 pt-2">Color Theme Accent</label>
                     <input type="hidden" id="edit_color" name="color_theme" value="blue">
 
                     <div class="flex items-center gap-2.5 overflow-x-auto pb-2 pt-0.5 w-full hide-scrollbar">
                         @php
-                            // Hex codes preserved here for the modal's active ring inline CSS logic
-$colorHexes = [
-    'yellow' => '#FDE047',
-    'violet' => '#A78BFA',
-    'rose' => '#FB7185',
-    'pink' => '#F472B6',
-    'blue' => '#60A5FA',
-    'orange' => '#FB923C',
-    'emerald' => '#34D399',
-    'green' => '#4ADE80',
-    'maroon' => '#9F1239',
-    'red' => '#F87171',
-    'gray' => '#9CA3AF',
+                            $colorHexes = [
+                                'yellow' => '#FDE047',
+                                'violet' => '#A78BFA',
+                                'rose' => '#FB7185',
+                                'pink' => '#F472B6',
+                                'blue' => '#60A5FA',
+                                'orange' => '#FB923C',
+                                'emerald' => '#34D399',
+                                'green' => '#4ADE80',
+                                'maroon' => '#9F1239',
+                                'red' => '#F87171',
+                                'gray' => '#9CA3AF',
                             ];
                         @endphp
                         @foreach ($colorHexes as $key => $hex)
                             <button type="button" onclick="selectColor('{{ $key }}')"
                                 id="btn-color-{{ $key }}"
-                                class="shrink-0 w-12 h-12 rounded-2xl border border-stone-200/60 bg-stone-100/20 flex items-center justify-center cursor-pointer transition-all duration-200"
+                                class="shrink-0 w-10 h-10 rounded-2xl border border-stone-200/60 bg-stone-100/20 flex items-center justify-center cursor-pointer transition-all duration-200"
                                 style="--active-ring: {{ $hex }};">
-                                <div class="w-6 h-6 rounded-full shadow-inner"
+                                <div class="w-5 h-5 rounded-full shadow-inner"
                                     style="background-color: {{ $hex }};"></div>
                             </button>
                         @endforeach
@@ -257,10 +267,9 @@ $colorHexes = [
 
                 <div class="pt-2 grid grid-cols-2 gap-3 w-full">
                     <button type="button" onclick="closeEditModal()"
-                        class="h-12 bg-white text-stone-600 border border-stone-200 rounded-2xl font-bold text-xs cursor-pointer transition-colors hover:bg-stone-50">Cancel</button>
+                        class="h-11 bg-white text-stone-600 border border-stone-200 rounded-2xl font-bold text-xs cursor-pointer transition-colors hover:bg-stone-50">Cancel</button>
                     <button type="submit"
-                        class="h-12 bg-stone-900 text-white border-none rounded-2xl font-bold text-xs cursor-pointer transition-colors hover:bg-stone-800 shadow-lg shadow-stone-900/20">Save
-                        Changes</button>
+                        class="h-11 bg-stone-900 text-white border-none rounded-2xl font-bold text-xs cursor-pointer transition-colors hover:bg-stone-800 shadow-lg shadow-stone-900/20">Save Changes</button>
                 </div>
             </form>
         </div>
@@ -326,31 +335,29 @@ $colorHexes = [
         </div>
     </div>
 
-    <!-- Add hide-scrollbar utility to your CSS or style block -->
+    <!-- Styles -->
     <style>
         .hide-scrollbar {
             -ms-overflow-style: none;
-            /* IE and Edge */
             scrollbar-width: none;
-            /* Firefox */
         }
-
         .hide-scrollbar::-webkit-scrollbar {
             display: none;
-            /* Chrome, Safari and Opera */
         }
     </style>
 
     <!-- ================= JAVASCRIPT CONTROLLER ================= -->
     <script>
-        const availableThemes = ['yellow', 'violet', 'rose', 'pink', 'blue', 'orange', 'emerald', 'green', 'maroon', 'red',
-            'gray'
-        ];
+        const availableThemes = ['yellow', 'violet', 'rose', 'pink', 'blue', 'orange', 'emerald', 'green', 'maroon', 'red', 'gray'];
 
-        function openEditModal(id, code, name, color) {
+        function openEditModal(id, code, name, semester, color, instructorName, instructorEmail, consultationHours) {
             document.getElementById('editForm').action = `/subjects/${id}`;
             document.getElementById('edit_code').value = code;
             document.getElementById('edit_name').value = name;
+            document.getElementById('edit_semester').value = semester || '1st Sem';
+            document.getElementById('edit_instructor_name').value = instructorName || '';
+            document.getElementById('edit_instructor_email').value = instructorEmail || '';
+            document.getElementById('edit_consultation_hours').value = consultationHours || '';
 
             selectColor(color || 'blue');
 
@@ -360,7 +367,6 @@ $colorHexes = [
             modal.classList.remove('hidden');
             modal.classList.add('flex');
 
-            // Small timeout ensures transition frame updates correctly
             setTimeout(() => {
                 modal.classList.remove('opacity-0');
                 modal.classList.add('opacity-100');
@@ -422,6 +428,21 @@ $colorHexes = [
             }, 10);
         }
 
+        function closeDeleteModal() {
+            const modal = document.getElementById('deleteSubjectModal');
+            const card = document.getElementById('deleteModalCard');
+
+            modal.classList.remove('opacity-100');
+            modal.classList.add('opacity-0');
+            card.classList.remove('scale-100');
+            card.classList.add('scale-95');
+
+            setTimeout(() => {
+                modal.classList.remove('flex');
+                modal.classList.add('hidden');
+            }, 200);
+        }
+
         function openArchiveModal(id, name, isArchived) {
             document.getElementById('archiveForm').action = `/subjects/${id}/archive`;
             document.getElementById('archive_target_name').innerText = name;
@@ -464,7 +485,6 @@ $colorHexes = [
 
             modal.classList.remove('opacity-100');
             modal.classList.add('opacity-0');
-            card.classList.remove('scale-100');
             card.classList.add('scale-95');
 
             setTimeout(() => {
@@ -473,53 +493,10 @@ $colorHexes = [
             }, 200);
         }
 
-        // Update your existing window.onclick listener to include the archive modal:
         window.onclick = function(e) {
             if (e.target === document.getElementById('editSubjectModal')) closeEditModal();
             if (e.target === document.getElementById('deleteSubjectModal')) closeDeleteModal();
             if (e.target === document.getElementById('archiveSubjectModal')) closeArchiveModal();
-        }
-
-        function closeDeleteModal() {
-            const modal = document.getElementById('deleteSubjectModal');
-            const card = document.getElementById('deleteModalCard');
-
-            modal.classList.remove('opacity-100');
-            modal.classList.add('opacity-0');
-            card.classList.remove('scale-100');
-            card.classList.add('scale-95');
-
-            setTimeout(() => {
-                modal.classList.remove('flex');
-                modal.classList.add('hidden');
-            }, 200);
-        }
-
-        window.onclick = function(e) {
-            if (e.target === document.getElementById('editSubjectModal')) closeEditModal();
-            if (e.target === document.getElementById('deleteSubjectModal')) closeDeleteModal();
-        }
-
-        function openEditModal(id, code, name, semester, color) {
-            document.getElementById('editForm').action = `/subjects/${id}`;
-            document.getElementById('edit_code').value = code;
-            document.getElementById('edit_name').value = name;
-            document.getElementById('edit_semester').value = semester || '1st Sem';
-
-            selectColor(color || 'blue');
-
-            const modal = document.getElementById('editSubjectModal');
-            const card = document.getElementById('editModalCard');
-
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-
-            setTimeout(() => {
-                modal.classList.remove('opacity-0');
-                modal.classList.add('opacity-100');
-                card.classList.remove('translate-y-8');
-                card.classList.add('translate-y-0');
-            }, 10);
         }
     </script>
 @endsection

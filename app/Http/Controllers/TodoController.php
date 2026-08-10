@@ -142,4 +142,19 @@ class TodoController extends Controller
 
         return view('todo.schedule', compact('weekDays', 'classes', 'subjectColors', 'pendingCounts'));
     }
+
+    public function updateStatus(Request $request, $id)
+    {
+        // Validate that the incoming status is one of our allowed values
+        $request->validate([
+            'status' => 'required|in:pending,done,overdue'
+        ]);
+
+        $todo = Todo::findOrFail($id);
+        $todo->status = $request->status;
+        $todo->save();
+
+        // Redirect back to the previous page (the subject show view)
+        return back()->with('success', 'Task status updated!');
+    }
 }

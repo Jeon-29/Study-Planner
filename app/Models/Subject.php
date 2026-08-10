@@ -11,7 +11,7 @@ class Subject extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'code', 'name', 'color_theme', 'semester', 'is_archived'];
+    protected $fillable = ['user_id', 'code', 'name', 'color_theme', 'semester', 'is_archived', 'instructor_name', 'instructor_email', 'consultation_hours'];
 
     protected $casts = ['is_archived' => 'boolean',];
 
@@ -31,5 +31,10 @@ class Subject extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function files(): HasMany
+    {
+        return $this->hasMany(File::class);
     }
 }

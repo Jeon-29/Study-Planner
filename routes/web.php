@@ -68,6 +68,16 @@ Route::middleware('auth')->group(function () {
 
     Route::patch('/subjects/{id}/archive', [SubjectController::class, 'toggleArchive'])->name('subjects.archive');
 
+    Route::get('/subjects/{id}', [SubjectController::class, 'show'])->name('subject.show');
+
+    // Route for storing course files
+    Route::post('/subjects/{id}/files', [SubjectController::class, 'storeFile'])->name('subject.files.store');
+
+    Route::delete('/files/{id}', [SubjectController::class, 'destroyFile'])->name('subject.files.destroy');
+
+    // Route to update just the status of a specific To-Do
+    Route::patch('/todos/{id}/status', [TodoController::class, 'updateStatus'])->name('todos.update-status');
+
     // --- Subject Hub Routes ---
 
     // Resource route automatically generates standard CRUD routes for SubjectController
