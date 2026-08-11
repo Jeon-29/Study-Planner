@@ -1,10 +1,10 @@
 FROM php:8.4-apache
 
-# Install dependencies and SQLite/GD extensions
+# Install dependencies, SQLite, and MySQL extensions
 RUN apt-get update && apt-get install -y \
     libpng-dev libjpeg-dev libfreetype6-dev zip unzip git libsqlite3-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install pdo pdo_sqlite gd
+    && docker-php-ext-install pdo pdo_sqlite pdo_mysql gd
 
 # Enable Apache mod_rewrite for Laravel routing
 RUN a2enmod rewrite
