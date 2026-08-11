@@ -175,7 +175,7 @@ class SubjectController extends Controller
 
             // Generate a unique filename and store it in the public storage
             $originalName = $uploadedFile->getClientOriginalName();
-            $path = $uploadedFile->store('subject-files', 'public');
+            $path = $uploadedFile->store('subject-files', 's3');
 
             // Create the database record linked to this subject
             File::create([
