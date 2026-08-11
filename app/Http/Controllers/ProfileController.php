@@ -34,15 +34,15 @@ class ProfileController extends Controller
         ]);
 
         // Handle Avatar Upload if provided
-        if ($request->hasFile('avatar')) {
-              // Safely delete old avatar if it exists on S3
-            if ($user->avatar) {
-                try {
-                if (Storage::disk('s3')->exists($user->avatar)) {
-                    Storage::disk('s3')->delete($user->avatar);
-                }
-            } catch (\Exception $e) {
-            // Silently bypass if old file is a legacy local file or cannot be reached
+if ($request->hasFile('avatar')) {
+    // Safely delete old avatar only if it's a valid string path and not '0'
+    if (!empty($user->avatar) && $user->avatar !== '0' && $user->avatar !== 0) {
+        try {
+            if (Storage::disk('s3')->exists($user->avatar)) {
+                Storage::disk('s3')->delete($user->avatar);
+            }
+        } catch (\Exception $e) {
+            // Bypass if old file cannot be reached
         }
     }
 
