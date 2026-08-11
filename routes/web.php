@@ -94,3 +94,11 @@ Route::middleware('auth')->group(function () {
     Route::match(['put', 'patch'], '/schedule/{classSchedule}', [ScheduleController::class, 'update'])->name('schedule.update');
     Route::delete('/schedule/{classSchedule}', [ScheduleController::class, 'destroy'])->name('schedule.destroy');
 });
+
+Route::get('/debug-storage', function () {
+    return [
+        'default_disk' => config('filesystems.default'),
+        'env_disk' => env('FILESYSTEM_DISK'),
+        'is_s3_configured' => !empty(config('filesystems.disks.s3.key')),
+    ];
+});
