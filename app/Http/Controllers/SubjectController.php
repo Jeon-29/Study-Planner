@@ -197,8 +197,8 @@ class SubjectController extends Controller
         $subjectId = $file->subject_id;
 
         // Delete the actual physical file from storage
-        if (Storage::disk('public')->exists($file->path)) {
-            Storage::disk('public')->delete($file->path);
+        if (Storage::disk('s3')->exists($file->path)) {
+            Storage::disk('s3')->delete($file->path);
         }
 
         // Delete the database record

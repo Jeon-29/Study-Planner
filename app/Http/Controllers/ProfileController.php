@@ -36,8 +36,8 @@ class ProfileController extends Controller
         // Handle Avatar Upload if provided
         if ($request->hasFile('avatar')) {
             // Delete old avatar if exists
-            if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
-                Storage::disk('public')->delete($user->avatar);
+            if ($user->avatar && Storage::disk('s3')->exists($user->avatar)) {
+                Storage::disk('s3')->delete($user->avatar);
             }
             $avatarPath = $request->file('avatar')->store('avatars', 's3');
             $validated['avatar'] = $avatarPath;
