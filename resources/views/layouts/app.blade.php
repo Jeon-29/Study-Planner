@@ -691,8 +691,9 @@
                 recurringContainer.style.display = 'flex';
             }
         }
-    </script>
+        </script>
     <script src="//[unpkg.com/alpinejs](https://unpkg.com/alpinejs)" defer></script>
+    <script src="{{ asset('js/guide.js') }}"></script>
 </body>
 
 </html>
