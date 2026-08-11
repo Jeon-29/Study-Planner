@@ -20,8 +20,9 @@ RUN composer install --no-dev --optimize-autoloader
 # Point Apache's DocumentRoot to Laravel's public directory
 RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf
 
-# Create SQLite database file and set permissions
-RUN touch /var/www/html/database/database.sqlite
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database
+# Set executable permission for the entrypoint script
+RUN chmod +x /var/www/html/entrypoint.sh
 
 EXPOSE 80
+
+ENTRYPOINT ["/var/www/html/entrypoint.sh"]
