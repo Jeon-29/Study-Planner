@@ -408,19 +408,25 @@
                         if (xhr.status >= 200 && xhr.status < 300) {
                             statusText.innerText = 'Upload complete!';
 
-                            // Parse JSON response and navigate to the files tab redirect URL
-                            const response = JSON.parse(xhr.responseText);
-                            if (response.redirect) {
-                                window.location.href = response.redirect;
-                            } else {
-                                window.location.reload();
+                            try {
+                                const response = JSON.parse(xhr.responseText);
+                                if (response && response.redirect) {
+                                    window.location.href = response.redirect;
+                                    return;
+                                }
+                            } catch (err) {
+                                // Response was HTML (standard redirect/view), so parse failed safely
                             }
+
+                            // Fallback redirect directly to the Files tab
+                            window.location.href =
+                                "{{ route('subject.show', ['id' => $subject->id, 'tab' => 'files']) }}";
+
                         } else if (xhr.status === 422) {
                             // This catches Laravel Validation Errors!
                             const response = JSON.parse(xhr.responseText);
                             console.error("Validation Failed:", response.errors);
 
-                            // Extract the first error message to show the user
                             const firstError = Object.values(response.errors)[0][0];
                             statusText.innerText = 'Validation Error!';
                             alert('Upload rejected: ' + firstError);
