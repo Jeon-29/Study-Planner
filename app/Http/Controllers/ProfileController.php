@@ -27,28 +27,26 @@ class ProfileController extends Controller
 
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$user->id],
             'track' => ['nullable', 'string', 'max:255'],
             'year_level' => ['nullable', 'string', 'max:50'],
             'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
         ]);
 
         // Handle Avatar Upload if provided
-if ($request->hasFile('avatar')) {
-    // Safely delete old avatar only if it's a valid string path and not '0'
-    if (!empty($user->avatar) && $user->avatar !== '0' && $user->avatar !== 0) {
-        try {
-            if (Storage::disk('s3')->exists($user->avatar)) {
-                Storage::disk('s3')->delete($user->avatar);
+        if ($request->hasFile('avatar')) {
+            // Safely attempt to delete old avatar without calling exists() first
+            if (!empty($user->avatar) && is_string($user->avatar) && $user->avatar !== '0') {
+                try {
+                    Storage::disk('s3')->delete($user->avatar);
+                } catch (\Exception $e) {
+                    // Bypass if old file cannot be reached or does not exist
+                }
             }
-        } catch (\Exception $e) {
-            // Bypass if old file cannot be reached
-        }
-    }
 
-    $avatarPath = $request->file('avatar')->store('avatars', 's3');
-    $validated['avatar'] = $avatarPath;
-}
+            $avatarPath = $request->file('avatar')->store('avatars', 's3');
+            $validated['avatar'] = $avatarPath;
+        }
 
         $user->update($validated);
 

@@ -192,25 +192,23 @@ class SubjectController extends Controller
     }
 
     public function destroyFile($id)
-{
-    $file = File::findOrFail($id);
-    $subjectId = $file->subject_id;
+    {
+        $file = File::findOrFail($id);
+        $subjectId = $file->subject_id;
 
-    // Delete the actual physical file from storage safely
-    if (!empty($file->path) && $file->path !== '0' && $file->path !== 0) {
-        try {
-            if (Storage::disk('s3')->exists($file->path)) {
+        // Delete the actual physical file from storage safely without exists() check
+        if (!empty($file->path) && is_string($file->path) && $file->path !== '0') {
+            try {
                 Storage::disk('s3')->delete($file->path);
+            } catch (\Exception $e) {
+                // Bypass storage errors if the file doesn't exist
             }
-        } catch (\Exception $e) {
-            // Bypass storage errors if the file doesn't exist
         }
+
+        // Delete the database record
+        $file->delete();
+
+        return redirect()->route('subject.show', ['id' => $subjectId, 'tab' => 'files'])
+            ->with('success', 'File deleted successfully!');
     }
-
-    // Delete the database record
-    $file->delete();
-
-    return redirect()->route('subject.show', ['id' => $subjectId, 'tab' => 'files'])
-        ->with('success', 'File deleted successfully!');
-}
 }
