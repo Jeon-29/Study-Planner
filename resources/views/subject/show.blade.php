@@ -429,8 +429,6 @@
                     });
 
                     xhr.open('POST', this.action, true);
-
-                    xhr.open('POST', this.action, true);
                     xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
                     xhr.setRequestHeader('Accept', 'application/json'); // ADD THIS LINE
                     xhr.send(formData);
