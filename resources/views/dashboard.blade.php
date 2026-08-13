@@ -154,7 +154,7 @@
                         <span
                             class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-black">
                             <span class="material-icons-round text-sm text-emerald-600">task_alt</span>
-                            Classes finished for the day!
+                            Schedule finished for today!
                         </span>
                     </div>
 
