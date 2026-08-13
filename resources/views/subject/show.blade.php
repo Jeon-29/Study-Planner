@@ -371,77 +371,78 @@
 
         // AJAX Form Upload with Real-time Progress Tracking
         document.addEventListener('DOMContentLoaded', function() {
-                    const fileForm = document.getElementById('addFileForm');
+            const fileForm = document.getElementById('addFileForm');
 
-                    if (fileForm) {
-                        fileForm.addEventListener('submit', function(e) {
-                                e.preventDefault(); // Prevent standard page reload
+            if (fileForm) {
+                fileForm.addEventListener('submit', function(e) {
+                    e.preventDefault(); // Prevent standard page reload
 
-                                const formData = new FormData(this);
-                                const xhr = new XMLHttpRequest();
+                    const formData = new FormData(this);
+                    const xhr = new XMLHttpRequest();
 
-                                const progressContainer = document.getElementById('uploadProgressContainer');
-                                const progressBar = document.getElementById('uploadProgressBar');
-                                const percentText = document.getElementById('uploadPercentText');
-                                const statusText = document.getElementById('uploadStatusText');
-                                const submitBtn = document.getElementById('uploadSubmitBtn');
+                    const progressContainer = document.getElementById('uploadProgressContainer');
+                    const progressBar = document.getElementById('uploadProgressBar');
+                    const percentText = document.getElementById('uploadPercentText');
+                    const statusText = document.getElementById('uploadStatusText');
+                    const submitBtn = document.getElementById('uploadSubmitBtn');
 
-                                // Reveal progress bar UI & disable button
-                                progressContainer.classList.remove('hidden');
-                                submitBtn.disabled = true;
-                                submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                    // Reveal progress bar UI & disable button
+                    progressContainer.classList.remove('hidden');
+                    submitBtn.disabled = true;
+                    submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
 
-                                // Track byte transfer stream
-                                xhr.upload.addEventListener('progress', function(e) {
-                                    if (e.lengthComputable) {
-                                        const percent = Math.round((e.loaded / e.total) * 100);
-                                        progressBar.style.width = percent + '%';
-                                        percentText.innerText = percent + '%';
+                    // Track byte transfer stream
+                    xhr.upload.addEventListener('progress', function(e) {
+                        if (e.lengthComputable) {
+                            const percent = Math.round((e.loaded / e.total) * 100);
+                            progressBar.style.width = percent + '%';
+                            percentText.innerText = percent + '%';
 
-                                        if (percent === 100) {
-                                            statusText.innerText = 'Syncing with Backblaze cloud...';
-                                        }
-                                    }
-                                });
-
-                                xhr.addEventListener('load', function() {
-                                        if (xhr.status >= 200 && xhr.status < 300) {
-                                            statusText.innerText = 'Upload complete!';
-
-                                            // Parse JSON response and navigate to the files tab redirect URL
-                                            const response = JSON.parse(xhr.responseText);
-                                            if (response.redirect) {
-                                                window.location.href = response.redirect;
-                                            } else {
-                                                window.location.reload();
-                                            } else if (xhr.status === 422) {
-                                                // This catches Laravel Validation Errors!
-                                                const response = JSON.parse(xhr.responseText);
-                                                console.error("Validation Failed:", response.errors);
-
-                                                // Extract the first error message to show the user
-                                                const firstError = Object.values(response.errors)[0][0];
-                                                statusText.innerText = 'Validation Error!';
-                                                alert('Upload rejected: ' + firstError);
-
-                                                submitBtn.disabled = false;
-                                                submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-                                            } else {
-                                                statusText.innerText = 'Upload failed!';
-                                                alert('Server Error (' + xhr.status + '). Check console.');
-                                                submitBtn.disabled = false;
-                                                submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-                                            }
-                                        });
-
-                                    xhr.open('POST', this.action, true); xhr.setRequestHeader('X-Requested-With',
-                                        'XMLHttpRequest'); xhr.setRequestHeader('Accept',
-                                    'application/json'); // ADD THIS LINE
-                                    xhr.send(formData);
-
-                                });
+                            if (percent === 100) {
+                                statusText.innerText = 'Syncing with Backblaze cloud...';
+                            }
                         }
                     });
+
+                    xhr.addEventListener('load', function() {
+                        if (xhr.status >= 200 && xhr.status < 300) {
+                            statusText.innerText = 'Upload complete!';
+
+                            // Parse JSON response and navigate to the files tab redirect URL
+                            const response = JSON.parse(xhr.responseText);
+                            if (response.redirect) {
+                                window.location.href = response.redirect;
+                            } else {
+                                window.location.reload();
+                            }
+                        } else if (xhr.status === 422) {
+                            // This catches Laravel Validation Errors!
+                            const response = JSON.parse(xhr.responseText);
+                            console.error("Validation Failed:", response.errors);
+
+                            // Extract the first error message to show the user
+                            const firstError = Object.values(response.errors)[0][0];
+                            statusText.innerText = 'Validation Error!';
+                            alert('Upload rejected: ' + firstError);
+
+                            submitBtn.disabled = false;
+                            submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                        } else {
+                            statusText.innerText = 'Upload failed!';
+                            alert('Server Error (' + xhr.status + '). Check console.');
+                            submitBtn.disabled = false;
+                            submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                        }
+                    });
+
+                    xhr.open('POST', this.action, true);
+                    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+                    xhr.setRequestHeader('Accept', 'application/json'); // ADD THIS LINE
+                    xhr.send(formData);
+
+                });
+            }
+        });
     </script>
 
     <!-- ================= MODERNISED LIQUID GLASS DELETE CONFIRMATION MODAL ================= -->
