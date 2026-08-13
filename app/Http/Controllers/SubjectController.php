@@ -46,7 +46,8 @@ class SubjectController extends Controller
      */
     public function show($id)
     {
-        $subject = Subject::with('todos')->findOrFail($id);
+        // UPDATE THIS LINE to include 'files'
+        $subject = Subject::with(['todos', 'files'])->findOrFail($id);
 
         // Prevent cross-user data tampering
         abort_if($subject->user_id !== Auth::id(), 403);
