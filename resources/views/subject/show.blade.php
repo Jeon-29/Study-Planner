@@ -103,7 +103,8 @@
 
                         <div class="flex items-center gap-3">
                             @if (($todo->status ?? 'pending') !== 'done')
-                                <form id="status-form-{{ $todo->id }}" action="{{ route('todos.update-status', $todo->id) }}" method="POST" class="m-0">
+                                <form id="status-form-{{ $todo->id }}"
+                                    action="{{ route('todos.update-status', $todo->id) }}" method="POST" class="m-0">
                                     @csrf
                                     @method('PATCH')
                                     <input type="hidden" name="status" value="done">
@@ -115,7 +116,8 @@
                                     </button>
                                 </form>
                             @else
-                                <form id="status-form-{{ $todo->id }}" action="{{ route('todos.update-status', $todo->id) }}" method="POST" class="m-0">
+                                <form id="status-form-{{ $todo->id }}"
+                                    action="{{ route('todos.update-status', $todo->id) }}" method="POST" class="m-0">
                                     @csrf
                                     @method('PATCH')
                                     <input type="hidden" name="status" value="pending">
@@ -258,8 +260,8 @@
                 </button>
             </div>
 
-            <form id="addFileForm" action="{{ route('subject.files.store', $subject->id) }}" method="POST" enctype="multipart/form-data"
-                class="flex flex-col gap-3">
+            <form id="addFileForm" action="{{ route('subject.files.store', $subject->id) }}" method="POST"
+                enctype="multipart/form-data" class="flex flex-col gap-3">
                 @csrf
 
                 <div>
@@ -297,8 +299,11 @@
                         <span id="uploadStatusText">Uploading file...</span>
                         <span id="uploadPercentText" class="text-indigo-600 font-extrabold">0%</span>
                     </div>
-                    <div class="w-full h-2.5 bg-stone-100/80 rounded-full overflow-hidden border border-stone-200/60 p-0.5">
-                        <div id="uploadProgressBar" class="h-full bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 w-0 transition-all duration-150 ease-out rounded-full"></div>
+                    <div
+                        class="w-full h-2.5 bg-stone-100/80 rounded-full overflow-hidden border border-stone-200/60 p-0.5">
+                        <div id="uploadProgressBar"
+                            class="h-full bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 w-0 transition-all duration-150 ease-out rounded-full">
+                        </div>
                     </div>
                 </div>
 
@@ -365,11 +370,11 @@
         });
 
         // AJAX Form Upload with Real-time Progress Tracking
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const fileForm = document.getElementById('addFileForm');
 
             if (fileForm) {
-                fileForm.addEventListener('submit', function (e) {
+                fileForm.addEventListener('submit', function(e) {
                     e.preventDefault(); // Prevent standard page reload
 
                     const formData = new FormData(this);
@@ -387,7 +392,7 @@
                     submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
 
                     // Track byte transfer stream
-                    xhr.upload.addEventListener('progress', function (e) {
+                    xhr.upload.addEventListener('progress', function(e) {
                         if (e.lengthComputable) {
                             const percent = Math.round((e.loaded / e.total) * 100);
                             progressBar.style.width = percent + '%';
@@ -400,20 +405,21 @@
                     });
 
                     // Completion response
-                    xhr.addEventListener('load', function () {
+                    xhr.addEventListener('load', function() {
                         if (xhr.status >= 200 && xhr.status < 400) {
                             statusText.innerText = 'Upload complete!';
                             window.location.reload();
                         } else {
                             statusText.innerText = 'Upload failed!';
-                            alert('Upload failed. Please check the file format or size and try again.');
+                            alert(
+                                'Upload failed. Please check the file format or size and try again.');
                             submitBtn.disabled = false;
                             submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
                         }
                     });
 
                     // Network Error handler
-                    xhr.addEventListener('error', function () {
+                    xhr.addEventListener('error', function() {
                         statusText.innerText = 'Network error!';
                         alert('A connection error occurred during upload.');
                         submitBtn.disabled = false;
@@ -509,12 +515,14 @@
         <div id="statusModalCard"
             class="bg-white/85 backdrop-blur-2xl border border-white rounded-[2rem] w-full max-w-[320px] p-6 shadow-[0_24px_60px_rgba(0,0,0,0.12)] text-center transform scale-95 transition-transform duration-300">
 
-            <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto mb-4 border border-emerald-100">
+            <div
+                class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto mb-4 border border-emerald-100">
                 <span class="material-icons-round text-2xl">task_alt</span>
             </div>
 
             <h3 id="statusModalTitle" class="m-0 text-sm font-bold text-stone-900 tracking-tight">Update Status?</h3>
-            <p id="statusModalDesc" class="m-0 mt-1 text-[0.72rem] text-stone-500 font-medium">Are you sure you want to change this task status?</p>
+            <p id="statusModalDesc" class="m-0 mt-1 text-[0.72rem] text-stone-500 font-medium">Are you sure you want to
+                change this task status?</p>
 
             <div class="mt-6 grid grid-cols-2 gap-3">
                 <button type="button" onclick="closeStatusModal()"
@@ -575,5 +583,12 @@
                 closeStatusModal();
             }
         });
+
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                const response = JSON.parse(xhr.responseText);
+                window.location.href = response.redirect; // Forces full page refresh to show new file
+            }
+        };
     </script>
 @endsection

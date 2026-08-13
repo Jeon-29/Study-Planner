@@ -175,6 +175,7 @@ class SubjectController extends Controller
     {
         // 1. Extend script execution limit before validation & Backblaze upload
         set_time_limit(300);
+        ini_set('default_socket_timeout', 300);
 
         // 2. Validate incoming input (Added zip, rar, images to allowed mimes)
         $request->validate([
@@ -202,8 +203,16 @@ class SubjectController extends Controller
             ]);
         }
 
-        return redirect()->route('subject.show', ['id' => $subject->id, 'tab' => 'files'])
-            ->with('success', 'File uploaded successfully!');
+        if ($request->ajax() || $request->wantsJson()) {
+    return response()->json([
+        'success' => true,
+        'message' => 'File uploaded successfully!',
+        'redirect' => route('subject.show', ['id' => $subject->id, 'tab' => 'files'])
+    ]);
+}
+
+return redirect()->route('subject.show', ['id' => $subject->id, 'tab' => 'files'])
+    ->with('success', 'File uploaded successfully!');
     }
 
     public function destroyFile($id)
