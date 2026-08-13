@@ -50,12 +50,16 @@
         class="fixed inset-0 z-[9999] bg-stone-900/15 backdrop-blur-md flex flex-col items-center justify-center transition-opacity duration-300 opacity-0 pointer-events-none">
         <div class="bg-white/80 backdrop-blur-2xl border border-white/60 p-6 rounded-[28px] shadow-2xl flex flex-col items-center gap-3 transform scale-95 transition-transform duration-300"
             id="loader-card">
-            <!-- Modern Dual Ring Spinner -->
+
+            <!-- FIXED: Dual Ring Spinner using border-4 -->
             <div class="relative w-10 h-10 flex items-center justify-center">
-                <div class="absolute inset-0 rounded-full border-3 border-stone-200"></div>
-                <div class="absolute inset-0 rounded-full border-3 border-[#DB2777] border-t-transparent animate-spin">
+                <!-- Background Ring -->
+                <div class="absolute inset-0 rounded-full border-4 border-stone-200"></div>
+                <!-- Spinning Accent Ring -->
+                <div class="absolute inset-0 rounded-full border-4 border-[#DB2777] border-t-transparent animate-spin">
                 </div>
             </div>
+
             <span class="text-[11px] font-extrabold text-stone-700 tracking-wider uppercase">Loading...</span>
         </div>
     </div>

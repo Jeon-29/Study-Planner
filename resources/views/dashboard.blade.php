@@ -4,8 +4,7 @@
 
 @section('content')
 
-@include('partials.guide-modal')
-
+    @include('partials.guide-modal')
     <!-- ========================================================================= -->
     <!-- 1. HEADER ROW WITH INLINE MICRO PROGRESS BADGE                            -->
     <!-- ========================================================================= -->
@@ -13,7 +12,7 @@
         <div class="flex items-center space-x-3">
             <!-- Profile Avatar Anchor -->
             <a href="{{ route('profile.index') }}"
-                class="w-15 h-15 rounded-full overflow-hidden border-2 border-pink-400 p-[2px] bg-white shadow-md flex-shrink-0 hover:scale-105 transition-transform duration-200 flex items-center justify-center">
+                class="w-12 h-12 rounded-full overflow-hidden border-2 border-pink-400 p-[2px] bg-white shadow-md flex-shrink-0 hover:scale-105 transition-transform duration-200 flex items-center justify-center">
                 @if (auth()->user()->avatar)
                     <img src="{{ str_starts_with(auth()->user()->avatar, 'http') ? auth()->user()->avatar : Storage::disk('s3')->url(auth()->user()->avatar) }}"
                         alt="Avatar" class="w-full h-full object-cover">
