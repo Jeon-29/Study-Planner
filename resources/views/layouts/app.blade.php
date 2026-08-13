@@ -45,6 +45,21 @@
 
 <body class="bg-[#FDFBF7] min-h-screen pb-28 relative overflow-x-hidden">
 
+    <!-- ================= PAGE TRANSITION LOADER ================= -->
+    <div id="page-loader"
+        class="fixed inset-0 z-[9999] bg-stone-900/15 backdrop-blur-md flex flex-col items-center justify-center transition-opacity duration-300 opacity-0 pointer-events-none">
+        <div class="bg-white/80 backdrop-blur-2xl border border-white/60 p-6 rounded-[28px] shadow-2xl flex flex-col items-center gap-3 transform scale-95 transition-transform duration-300"
+            id="loader-card">
+            <!-- Modern Dual Ring Spinner -->
+            <div class="relative w-10 h-10 flex items-center justify-center">
+                <div class="absolute inset-0 rounded-full border-3 border-stone-200"></div>
+                <div class="absolute inset-0 rounded-full border-3 border-[#DB2777] border-t-transparent animate-spin">
+                </div>
+            </div>
+            <span class="text-[11px] font-extrabold text-stone-700 tracking-wider uppercase">Loading...</span>
+        </div>
+    </div>
+
     <!-- GLOBAL LIQUID-GLASS TOAST NOTIFICATION COMPONENT -->
     @if (session('success'))
         <div id="success-toast"
@@ -691,7 +706,69 @@
                 recurringContainer.style.display = 'flex';
             }
         }
-        </script>
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const loader = document.getElementById('page-loader');
+            const loaderCard = document.getElementById('loader-card');
+
+            function showLoader() {
+                if (!loader) return;
+                loader.classList.remove('opacity-0', 'pointer-events-none');
+                loader.classList.add('opacity-100');
+                if (loaderCard) {
+                    loaderCard.classList.remove('scale-95');
+                    loaderCard.classList.add('scale-100');
+                }
+            }
+
+            function hideLoader() {
+                if (!loader) return;
+                loader.classList.remove('opacity-100');
+                loader.classList.add('opacity-0', 'pointer-events-none');
+                if (loaderCard) {
+                    loaderCard.classList.remove('scale-100');
+                    loaderCard.classList.add('scale-95');
+                }
+            }
+
+            // 1. Intercept internal link clicks
+            document.addEventListener('click', function(e) {
+                const anchor = e.target.closest('a');
+                if (!anchor) return;
+
+                const href = anchor.getAttribute('href');
+                const target = anchor.getAttribute('target');
+
+                // Skip if link is a modal trigger, anchor hash (#), JS void, new tab, or modifier keys (Ctrl/Cmd click)
+                if (
+                    !href ||
+                    href.startsWith('#') ||
+                    href.startsWith('javascript:') ||
+                    target === '_blank' ||
+                    e.ctrlKey ||
+                    e.metaKey ||
+                    anchor.hasAttribute('download')
+                ) {
+                    return;
+                }
+
+                showLoader();
+            });
+
+            // 2. Intercept form submissions
+            document.addEventListener('submit', function(e) {
+                // Check if form is valid before showing loader
+                if (e.target.checkValidity()) {
+                    showLoader();
+                }
+            });
+
+            // 3. Hide loader when page is restored from Back/Forward Cache (BFCache)
+            window.addEventListener('pageshow', function(event) {
+                hideLoader();
+            });
+        });
+    </script>
     <script src="//[unpkg.com/alpinejs](https://unpkg.com/alpinejs)" defer></script>
     <script src="{{ asset('js/guide.js') }}"></script>
 </body>
