@@ -207,7 +207,7 @@
 
                         <div class="flex items-center gap-2">
                             <!-- Download Button -->
-                            <a href="{{ asset('storage/' . $file->path) }}" target="_blank"
+                            <a href="{{ route('subject.files.download', $file->id) }}" target="_blank"
                                 class="w-9 h-9 rounded-xl flex items-center justify-center text-stone-600 bg-stone-100/60 border border-stone-200/60 hover:bg-stone-900 hover:text-white transition-colors"
                                 title="Download / View File">
                                 <span class="material-icons-round text-base">download</span>

@@ -37,7 +37,7 @@
                 <label for="avatar-input" class="cursor-pointer group relative mb-3">
                     <div class="w-20 h-20 rounded-full bg-gradient-to-tr from-pink-200 to-indigo-200 flex items-center justify-center overflow-hidden shadow-2xs border-2 border-white/80 group-hover:opacity-90 transition">
                         @if(auth()->user()->avatar)
-                            <img src="{{ asset('storage/' . auth()->user()->avatar) }}" alt="Avatar" class="w-full h-full object-cover">
+                            <img src="{{ str_starts_with(auth()->user()->avatar, 'http') ? auth()->user()->avatar : Storage::disk('s3')->url(auth()->user()->avatar) }}" alt="Avatar" class="w-full h-full object-cover">
                         @else
                             <span class="text-2xl font-black text-indigo-950">{{ substr(auth()->user()->name, 0, 1) }}</span>
                         @endif

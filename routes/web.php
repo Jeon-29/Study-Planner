@@ -75,6 +75,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/subjects/{id}', [SubjectController::class, 'show'])->name('subject.show');
     Route::post('/subjects/{id}/files', [SubjectController::class, 'storeFile'])->name('subject.files.store');
     Route::delete('/files/{id}', [SubjectController::class, 'destroyFile'])->name('subject.files.destroy');
+    Route::get('/files/{id}/download', [SubjectController::class, 'downloadFile'])->name('subject.files.download');
 
     Route::resource('subjects', SubjectController::class)->names('subject')->only([
         'index',
@@ -83,6 +84,8 @@ Route::middleware('auth')->group(function () {
         'update',
         'destroy',
     ]);
+
+
 
     // --- Profile Routes ---
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
@@ -96,34 +99,34 @@ Route::middleware('auth')->group(function () {
     Route::delete('/schedule/{classSchedule}', [ScheduleController::class, 'destroy'])->name('schedule.destroy');
 });
 
-Route::get('/test-s3', function () {
-    try {
-        $disk = Storage::build([
-            'driver'                  => 's3',
-            'key'                     => env('AWS_ACCESS_KEY_ID'),
-            'secret'                  => env('AWS_SECRET_ACCESS_KEY'),
-            'region'                  => env('AWS_DEFAULT_REGION'),
-            'bucket'                  => env('AWS_BUCKET'),
-            'endpoint'                => env('AWS_ENDPOINT'),
-            'use_path_style_endpoint' => true,
-            'visibility'              => 'public', // <--- Force 'public-read' ACL for Backblaze B2
-            'throw'                   => true,
-        ]);
+// Route::get('/test-s3', function () {
+//     try {
+//         $disk = Storage::build([
+//             'driver'                  => 's3',
+//             'key'                     => env('AWS_ACCESS_KEY_ID'),
+//             'secret'                  => env('AWS_SECRET_ACCESS_KEY'),
+//             'region'                  => env('AWS_DEFAULT_REGION'),
+//             'bucket'                  => env('AWS_BUCKET'),
+//             'endpoint'                => env('AWS_ENDPOINT'),
+//             'use_path_style_endpoint' => true,
+//             'visibility'              => 'public', // <--- Force 'public-read' ACL for Backblaze B2
+//             'throw'                   => true,
+//         ]);
 
-        $disk->put('test-upload.txt', 'Connection successful!');
+//         $disk->put('test-upload.txt', 'Connection successful!');
 
-        return response()->json([
-            'status'     => 'SUCCESS',
-            'message'    => 'Uploaded test-upload.txt to Backblaze successfully!',
-            'file_url'   => $disk->url('test-upload.txt'),
-        ]);
-    } catch (\Throwable $e) {
-        return response()->json([
-            'status'        => 'FAILED',
-            'error_type'    => get_class($e),
-            'error_message' => $e->getMessage(),
-        ], 500);
-    }
-});
+//         return response()->json([
+//             'status'     => 'SUCCESS',
+//             'message'    => 'Uploaded test-upload.txt to Backblaze successfully!',
+//             'file_url'   => $disk->url('test-upload.txt'),
+//         ]);
+//     } catch (\Throwable $e) {
+//         return response()->json([
+//             'status'        => 'FAILED',
+//             'error_type'    => get_class($e),
+//             'error_message' => $e->getMessage(),
+//         ], 500);
+//     }
+// });
 
 

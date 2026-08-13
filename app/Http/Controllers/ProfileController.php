@@ -22,36 +22,29 @@ class ProfileController extends Controller
     }
 
     public function update(Request $request)
-    {
-        $user = Auth::user();
+{
+    $user = auth()->user();
 
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$user->id],
-            'track' => ['nullable', 'string', 'max:255'],
-            'year_level' => ['nullable', 'string', 'max:50'],
-            'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
-        ]);
-
-        // Handle Avatar Upload if provided
-        if ($request->hasFile('avatar')) {
-            // Safely attempt to delete old avatar without calling exists() first
-            if (!empty($user->avatar) && is_string($user->avatar) && $user->avatar !== '0') {
-                try {
-                    Storage::disk('s3')->delete($user->avatar);
-                } catch (\Exception $e) {
-                    // Bypass if old file cannot be reached or does not exist
-                }
-            }
-
-            $avatarPath = $request->file('avatar')->store('avatars', 's3');
-            $validated['avatar'] = $avatarPath;
+    // Handle Avatar Upload
+    if ($request->hasFile('avatar')) {
+        // Delete old avatar from Backblaze if it exists
+        if ($user->avatar && Storage::disk('s3')->exists($user->avatar)) {
+            Storage::disk('s3')->delete($user->avatar);
         }
 
-        $user->update($validated);
-
-        return redirect()->route('profile.index')->with('success', 'Profile updated successfully!');
+        // Store new avatar in Backblaze B2 'avatars' folder
+        $path = $request->file('avatar')->store('avatars', 's3');
+        $user->avatar = $path;
     }
+
+    $user->name = $request->input('name');
+    $user->email = $request->input('email');
+    $user->track = $request->input('track');
+    $user->year_level = $request->input('year_level');
+    $user->save();
+
+    return back()->with('success', 'Profile updated successfully!');
+}
 
     public function updatePassword(Request $request)
     {
