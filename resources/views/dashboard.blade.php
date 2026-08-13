@@ -4,7 +4,6 @@
 
 @section('content')
 
-    @include('partials.guide-modal')
 
     <!-- ========================================================================= -->
     <!-- 1. HEADER ROW WITH INLINE MICRO PROGRESS BADGE                            -->
@@ -16,7 +15,7 @@
                 class="w-12 h-12 rounded-full overflow-hidden border-2 border-pink-400 p-[2px] bg-white shadow-md flex-shrink-0 hover:scale-105 transition-transform duration-200 flex items-center justify-center">
                 @if (auth()->user()->avatar)
                     <img src="{{ str_starts_with(auth()->user()->avatar, 'http') ? auth()->user()->avatar : Storage::disk('s3')->url(auth()->user()->avatar) }}"
-                        alt="Avatar" class="w-full h-full object-cover">
+                        alt="Avatar" class="w-full h-full object-cover; border-radius: 50%;">
                 @else
                     <span class="text-sm font-black text-indigo-950">{{ substr(auth()->user()->name, 0, 1) }}</span>
                 @endif
@@ -357,4 +356,6 @@
             @endforelse
         </div>
     </div>
+
+    @include('partials.guide-modal')
 @endsection
