@@ -173,26 +173,26 @@ class SubjectController extends Controller
 
     public function storeFile(Request $request, $id)
     {
+        // 1. Extend script execution limit before validation & Backblaze upload
+        set_time_limit(300);
 
-        // Validate the incoming input
+        // 2. Validate incoming input (Added zip, rar, images to allowed mimes)
         $request->validate([
             'title' => 'required|string|max:255',
             'category' => 'required|string',
-            'file' => 'required|file|mimes:pdf,doc,docx,ppt,pptx,xls,xlsx|max:102400', // Max 10MB
-
+            'file' => 'required|file|mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,zip,rar,png,jpg,jpeg|max:102400', // 100MB = 102,400 KB
         ]);
 
-        set_time_limit(300);
         $subject = Subject::findOrFail($id);
 
         if ($request->hasFile('file')) {
             $uploadedFile = $request->file('file');
 
-            // Generate a unique filename and store it in the public storage
+            // Generate a unique filename and store it in the S3/Backblaze bucket
             $originalName = $uploadedFile->getClientOriginalName();
             $path = $uploadedFile->store('subject-files', 's3');
 
-            // Create the database record linked to this subject
+            // Create database record
             File::create([
                 'subject_id' => $subject->id,
                 'title' => $request->title,
