@@ -174,27 +174,36 @@ class SubjectController extends Controller
 
     public function storeFile(Request $request, $id)
     {
-        // 1. Extend script execution limit before validation & Backblaze upload
         set_time_limit(300);
         ini_set('default_socket_timeout', 300);
 
-        // 2. Validate incoming input (Added zip, rar, images to allowed mimes)
         $request->validate([
             'title' => 'required|string|max:255',
             'category' => 'required|string',
-            'file' => 'required|file|mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,zip,rar,png,jpg,jpeg|max:102400', // 100MB = 102,400 KB
+            'file' => 'required|file|mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,zip,rar,png,jpg,jpeg|max:102400',
         ]);
 
         $subject = Subject::findOrFail($id);
 
-        if ($request->hasFile('file')) {
-            $uploadedFile = $request->file('file');
+        // 1. Ensure file was actually received by PHP
+        if (!$request->hasFile('file')) {
+            return response()->json([
+                'message' => 'Server did not receive the file. Check PHP upload limits.'
+            ], 400);
+        }
 
-            // Generate a unique filename and store it in the S3/Backblaze bucket
+        try {
+            $uploadedFile = $request->file('file');
             $originalName = $uploadedFile->getClientOriginalName();
+
+            // 2. Upload to Backblaze / S3
             $path = $uploadedFile->store('subject-files', 's3');
 
-            // Create database record
+            if (!$path) {
+                throw new \Exception('Storage driver returned empty path.');
+            }
+
+            // 3. Create DB record
             File::create([
                 'subject_id' => $subject->id,
                 'title' => $request->title,
@@ -202,18 +211,21 @@ class SubjectController extends Controller
                 'path' => $path,
                 'filename' => $originalName,
             ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'File uploaded successfully!',
+                'redirect' => route('subject.show', ['id' => $subject->id, 'tab' => 'files'])
+            ]);
+
+        } catch (\Exception $e) {
+            // Log full error details to storage/logs/laravel.log
+            \Log::error('Backblaze Upload Failed: ' . $e->getMessage());
+
+            return response()->json([
+                'message' => 'Upload failed: ' . $e->getMessage()
+            ], 500);
         }
-
-        if ($request->ajax() || $request->wantsJson()) {
-    return response()->json([
-        'success' => true,
-        'message' => 'File uploaded successfully!',
-        'redirect' => route('subject.show', ['id' => $subject->id, 'tab' => 'files'])
-    ]);
-}
-
-return redirect()->route('subject.show', ['id' => $subject->id, 'tab' => 'files'])
-    ->with('success', 'File uploaded successfully!');
     }
 
     public function destroyFile($id)
