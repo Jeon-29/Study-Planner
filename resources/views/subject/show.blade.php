@@ -404,20 +404,31 @@
                         }
                     });
 
-                    // Completion response
                     xhr.addEventListener('load', function() {
-                        if (xhr.status >= 200 && xhr.status < 400) {
+                        if (xhr.status >= 200 && xhr.status < 300) {
                             statusText.innerText = 'Upload complete!';
                             window.location.reload();
+                        } else if (xhr.status === 422) {
+                            // This catches Laravel Validation Errors!
+                            const response = JSON.parse(xhr.responseText);
+                            console.error("Validation Failed:", response.errors);
+
+                            // Extract the first error message to show the user
+                            const firstError = Object.values(response.errors)[0][0];
+                            statusText.innerText = 'Validation Error!';
+                            alert('Upload rejected: ' + firstError);
+
+                            submitBtn.disabled = false;
+                            submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
                         } else {
                             statusText.innerText = 'Upload failed!';
-                            alert(
-                                'Upload failed. Please check the file format or size and try again.'
-                            );
+                            alert('Server Error (' + xhr.status + '). Check console.');
                             submitBtn.disabled = false;
                             submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
                         }
                     });
+
+                    xhr.open('POST', this.action, true);
 
                     xhr.open('POST', this.action, true);
                     xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
@@ -570,37 +581,6 @@
         document.getElementById('confirmStatusBtn').addEventListener('click', function() {
             if (activeStatusFormId) {
                 document.getElementById(activeStatusFormId).submit();
-            }
-        });
-
-        window.addEventListener('click', function(e) {
-            if (e.target === document.getElementById('statusModal')) {
-                closeStatusModal();
-            }
-        });
-
-
-        xhr.addEventListener('load', function() {
-            if (xhr.status >= 200 && xhr.status < 300) {
-                statusText.innerText = 'Upload complete!';
-                window.location.reload();
-            } else if (xhr.status === 422) {
-                // This catches Laravel Validation Errors!
-                const response = JSON.parse(xhr.responseText);
-                console.error("Validation Failed:", response.errors);
-
-                // Extract the first error message to show the user
-                const firstError = Object.values(response.errors)[0][0];
-                statusText.innerText = 'Validation Error!';
-                alert('Upload rejected: ' + firstError);
-
-                submitBtn.disabled = false;
-                submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-            } else {
-                statusText.innerText = 'Upload failed!';
-                alert('Server Error (' + xhr.status + '). Check console.');
-                submitBtn.disabled = false;
-                submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
             }
         });
     </script>
