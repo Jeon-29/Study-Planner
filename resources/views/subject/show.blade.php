@@ -412,7 +412,8 @@
                         } else {
                             statusText.innerText = 'Upload failed!';
                             alert(
-                                'Upload failed. Please check the file format or size and try again.');
+                                'Upload failed. Please check the file format or size and try again.'
+                            );
                             submitBtn.disabled = false;
                             submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
                         }
@@ -584,11 +585,32 @@
             }
         });
 
-        xhr.onload = function() {
-            if (xhr.status === 200) {
+        xhr.open('POST', this.action, true);
+        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        xhr.setRequestHeader('Accept', 'application/json'); // ADD THIS LINE
+        xhr.send(formData);
+        xhr.addEventListener('load', function() {
+            if (xhr.status >= 200 && xhr.status < 300) {
+                statusText.innerText = 'Upload complete!';
+                window.location.reload();
+            } else if (xhr.status === 422) {
+                // This catches Laravel Validation Errors!
                 const response = JSON.parse(xhr.responseText);
-                window.location.href = response.redirect; // Forces full page refresh to show new file
+                console.error("Validation Failed:", response.errors);
+
+                // Extract the first error message to show the user
+                const firstError = Object.values(response.errors)[0][0];
+                statusText.innerText = 'Validation Error!';
+                alert('Upload rejected: ' + firstError);
+
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            } else {
+                statusText.innerText = 'Upload failed!';
+                alert('Server Error (' + xhr.status + '). Check console.');
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
             }
-        };
+        });
     </script>
 @endsection
