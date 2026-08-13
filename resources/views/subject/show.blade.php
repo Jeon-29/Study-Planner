@@ -3,7 +3,8 @@
 @section('content') {{-- Defines the 'content' section to be injected into the main layout --}}
     <div class="max-w-2xl mx-auto px-4 py-3 sm:px-6 lg:px-8 font-sans"> {{-- Container with responsive max-width, centering, padding, and sans font --}}
 
-        @php {{-- Start PHP code block for view logic --}}
+        @php
+            // Start PHP code block for view logic
             $currentTab = request('tab', 'todos'); // Retrieves 'tab' query string parameter, defaulting to 'todos'
             $theme = $subject->color_theme ?? 'blue'; // Fallback to 'blue' theme if subject has no color_theme set
 
@@ -22,7 +23,7 @@
                 'gray' => 'from-gray-300/80 to-gray-500/70', // Gray gradient class string
             ]; // End of gradient lookup array
             $gradientClass = $bgGradients[$theme] ?? 'from-blue-300/80 to-blue-500/70'; // Select active gradient or default to blue
-        @endphp {{-- End PHP code block --}}
+        @endphp
 
         <!-- Back Navigation & Header --> {{-- Header wrapper section --}}
         <div class="mb-6 flex items-center justify-between"> {{-- Flex row wrapper with margin bottom --}}
@@ -47,7 +48,7 @@
 
             @if ($subject->instructor_name) {{-- Checks if instructor name exists --}}
                 <div class="mt-4 pt-4 border-t border-white/20 text-xs font-medium flex flex-col gap-1 drop-shadow-sm"> {{-- Instructor details container --}}
-                    <p><strong>Instructor:</strong> {{ $subject->instructor_name }}</p> {{-- Displays instructor name --}}
+                    <p><strong>Instructor:</strong> {{ $subject->instructor_name }}</p {{-- Displays instructor name --}}
                     @if ($subject->instructor_email) {{-- Checks if instructor email exists --}}
                         <p><strong>Email:</strong> {{ $subject->instructor_email }}</p> {{-- Displays instructor email --}}
                     @endif {{-- End email condition --}}
@@ -83,7 +84,8 @@
             <!-- To-Dos List Container --> {{-- Container for task items --}}
             <div class="flex flex-col gap-3"> {{-- Vertical flex column for task cards --}}
                 @forelse($subject->todos as $todo) {{-- Loop through each subject task --}}
-                    @php {{-- Start task status styling logic --}}
+                    @php
+                        // Start task status styling logic
                         $statusMap = [ // Map of task status values to Tailwind CSS styles
                             'pending' => 'bg-amber-100 text-amber-800 border-amber-200', // Styling for pending tasks
                             'done' => 'bg-emerald-100 text-emerald-800 border-emerald-200', // Styling for completed tasks
@@ -91,7 +93,7 @@
                         ]; // End status mapping array
                         $todoStatus = $todo->status ?? 'pending'; // Fallback task status to 'pending'
                         $statusStyles = $statusMap[$todoStatus] ?? $statusMap['pending']; // Choose status CSS class
-                    @endphp {{-- End PHP task status logic --}}
+                    @endphp
 
                     <div {{-- Task card element --}}
                         class="p-4 bg-white/70 backdrop-blur-md border border-stone-200/60 rounded-2xl flex items-center justify-between shadow-sm"> {{-- Glassmorphic card styling --}}
@@ -128,7 +130,7 @@
                                         <span class="flex items-center gap-1"> {{-- Inline flex icon container --}}
                                             <span class="material-icons-round text-[0.6rem]">check</span> Done {{-- Check icon and 'Done' text --}}
                                         </span> {{-- Close inline icon container --}}
-                                    </button> {{-- Close revert button --}}
+                                    </button {{-- Close revert button --}}
                                 </form> {{-- Close revert form --}}
                             @endif {{-- End task status conditional --}}
                         </div> {{-- Close action button container --}}
@@ -146,7 +148,7 @@
             <div class="flex items-center justify-between mb-4"> {{-- Header flex row --}}
                 <div> {{-- Text header container --}}
                     <h2 class="text-lg font-bold text-stone-900 tracking-tight">Course Files & Documents</h2> {{-- Files section heading --}}
-                    <p class="text-xs text-stone-500">Organized study materials and resources</p> {{-- Files section subtitle --}}
+                    <p class="text-xs text-stone-500">Organized study materials and resources</p {{-- Files section subtitle --}}
                 </div> {{-- Close text header container --}}
                 <button type="button" onclick="openFileModal()" {{-- Button to open file upload modal --}}
                     class="px-4 py-2 bg-stone-900 text-white rounded-2xl text-xs font-bold hover:bg-stone-800 transition-colors shadow-md shadow-stone-900/20 flex items-center gap-1 cursor-pointer"> {{-- Button styling --}}
@@ -156,12 +158,14 @@
 
             <!-- Files List Container --> {{-- Container for file list cards --}}
             <div class="flex flex-col gap-3"> {{-- Vertical flex column --}}
-                @php {{-- Start file collection initialization --}}
+                @php
+                    // Start file collection initialization
                     $files = $subject->files ?? []; // Fallback to empty array if no files attached
-                @endphp {{-- End PHP section --}}
+                @endphp
 
                 @forelse($files as $file) {{-- Loop through attached file records --}}
-                    @php {{-- Start file type configuration logic --}}
+                    @php
+                        // Start file type configuration logic
                         $extension = strtolower(pathinfo($file->filename ?? $file->path, PATHINFO_EXTENSION)); // Extract file extension in lowercase
 
                         $fileConfig = match (true) { // Match file extension to icon and color scheme
@@ -186,7 +190,7 @@
                                 'color' => 'text-stone-600 bg-stone-100 border-stone-200', // Neutral stone theme
                             ],
                         }; // End match expression
-                    @endphp {{-- End PHP file configuration block --}}
+                    @endphp
 
                     <div {{-- File item card --}}
                         class="p-4 bg-white/70 backdrop-blur-md border border-stone-200/60 rounded-2xl flex items-center justify-between shadow-sm"> {{-- Card container styling --}}
@@ -224,15 +228,15 @@
                                     class="w-9 h-9 rounded-xl flex items-center justify-center text-rose-600 bg-rose-50/60 border border-rose-200/60 hover:bg-rose-600 hover:text-white transition-colors cursor-pointer" {{-- Delete button styles --}}
                                     title="Delete File"> {{-- Tooltip label --}}
                                     <span class="material-icons-round text-base">delete_outline</span> {{-- Delete trash icon --}}
-                                </button> {{-- Close delete trigger button --}}
-                            </form> {{-- Close delete form --}}
+                                </button {{-- Close delete trigger button --}}
+                            </form {{-- Close delete form --}}
                         </div> {{-- Close action buttons wrapper --}}
                     </div> {{-- Close file item card --}}
                 @empty {{-- Executed when no files exist --}}
                     <div {{-- Empty state container --}}
                         class="flex flex-col items-center justify-center py-12 text-stone-400 bg-white/40 backdrop-blur-md rounded-2xl border border-stone-200/60"> {{-- Glassmorphic empty container styling --}}
                         <span class="material-icons-round text-3xl mb-1 opacity-50">folder_off</span> {{-- Empty folder icon --}}
-                        <p class="text-xs font-semibold">No files uploaded for this subject yet.</p> {{-- Empty state primary text --}}
+                        <p class="text-xs font-semibold">No files uploaded for this subject yet.</p {{-- Empty state primary text --}}
                         <p class="text-[0.7rem] text-stone-400 mt-0.5">Click 'Add File' to upload lecture notes, slides, or {{-- Subtext --}}
                             guidelines.</p> {{-- Subtext continuation --}}
                     </div> {{-- Close empty state container --}}
@@ -399,7 +403,7 @@
                             percentText.innerText = percent + '%'; // Update text percentage counter
 
                             if (percent === 100) { // Check if client stream completed
-                                statusText.innerText = 'Syncing with Backblaze cloud...'; // Update status text for cloud processing
+                                statusText.innerText = 'Syncing with cloud storage...'; // Update status text for cloud processing
                             } // End completion check
                         } // End lengthComputable check
                     }); // End upload progress listener
