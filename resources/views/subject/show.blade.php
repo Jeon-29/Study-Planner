@@ -258,7 +258,7 @@
                 </button>
             </div>
 
-            <form action="{{ route('subject.files.store', $subject->id) }}" method="POST" enctype="multipart/form-data"
+            <form id="addFileForm" action="{{ route('subject.files.store', $subject->id) }}" method="POST" enctype="multipart/form-data"
                 class="flex flex-col gap-3">
                 @csrf
 
@@ -291,18 +291,30 @@
                         class="w-full py-2 px-3 bg-stone-100/40 border border-stone-200/60 rounded-2xl text-xs text-stone-600 file:mr-4 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer">
                 </div>
 
+                <!-- ================= UPLOAD PROGRESS BAR CONTAINER ================= -->
+                <div id="uploadProgressContainer" class="hidden space-y-1.5 pt-2">
+                    <div class="flex justify-between items-center text-[0.68rem] font-bold text-stone-600 px-0.5">
+                        <span id="uploadStatusText">Uploading file...</span>
+                        <span id="uploadPercentText" class="text-indigo-600 font-extrabold">0%</span>
+                    </div>
+                    <div class="w-full h-2.5 bg-stone-100/80 rounded-full overflow-hidden border border-stone-200/60 p-0.5">
+                        <div id="uploadProgressBar" class="h-full bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 w-0 transition-all duration-150 ease-out rounded-full"></div>
+                    </div>
+                </div>
+
                 <div class="pt-2 grid grid-cols-2 gap-3 w-full">
                     <button type="button" onclick="closeFileModal()"
                         class="h-11 bg-white text-stone-600 border border-stone-200 rounded-2xl font-bold text-xs cursor-pointer transition-colors hover:bg-stone-50">Cancel</button>
-                    <button type="submit"
-                        class="h-11 bg-stone-900 text-white border-none rounded-2xl font-bold text-xs cursor-pointer transition-colors hover:bg-stone-800 shadow-lg shadow-stone-900/20">Upload
-                        File</button>
+                    <button type="submit" id="uploadSubmitBtn"
+                        class="h-11 bg-stone-900 text-white border-none rounded-2xl font-bold text-xs cursor-pointer transition-colors hover:bg-stone-800 shadow-lg shadow-stone-900/20 flex items-center justify-center gap-1">
+                        <span>Upload File</span>
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Script Controller for File Modal -->
+    <!-- Script Controller for File Modal with Progress Tracker -->
     <script>
         function openFileModal() {
             const modal = document.getElementById('addFileModal');
@@ -331,12 +343,87 @@
             setTimeout(() => {
                 modal.classList.remove('flex');
                 modal.classList.add('hidden');
+
+                // Reset progress bar on close
+                const progressContainer = document.getElementById('uploadProgressContainer');
+                const progressBar = document.getElementById('uploadProgressBar');
+                const submitBtn = document.getElementById('uploadSubmitBtn');
+
+                if (progressContainer) progressContainer.classList.add('hidden');
+                if (progressBar) progressBar.style.width = '0%';
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
             }, 300);
         }
 
         window.addEventListener('click', function(e) {
             if (e.target === document.getElementById('addFileModal')) {
                 closeFileModal();
+            }
+        });
+
+        // AJAX Form Upload with Real-time Progress Tracking
+        document.addEventListener('DOMContentLoaded', function () {
+            const fileForm = document.getElementById('addFileForm');
+
+            if (fileForm) {
+                fileForm.addEventListener('submit', function (e) {
+                    e.preventDefault(); // Prevent standard page reload
+
+                    const formData = new FormData(this);
+                    const xhr = new XMLHttpRequest();
+
+                    const progressContainer = document.getElementById('uploadProgressContainer');
+                    const progressBar = document.getElementById('uploadProgressBar');
+                    const percentText = document.getElementById('uploadPercentText');
+                    const statusText = document.getElementById('uploadStatusText');
+                    const submitBtn = document.getElementById('uploadSubmitBtn');
+
+                    // Reveal progress bar UI & disable button
+                    progressContainer.classList.remove('hidden');
+                    submitBtn.disabled = true;
+                    submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+                    // Track byte transfer stream
+                    xhr.upload.addEventListener('progress', function (e) {
+                        if (e.lengthComputable) {
+                            const percent = Math.round((e.loaded / e.total) * 100);
+                            progressBar.style.width = percent + '%';
+                            percentText.innerText = percent + '%';
+
+                            if (percent === 100) {
+                                statusText.innerText = 'Syncing with Backblaze cloud...';
+                            }
+                        }
+                    });
+
+                    // Completion response
+                    xhr.addEventListener('load', function () {
+                        if (xhr.status >= 200 && xhr.status < 400) {
+                            statusText.innerText = 'Upload complete!';
+                            window.location.reload();
+                        } else {
+                            statusText.innerText = 'Upload failed!';
+                            alert('Upload failed. Please check the file format or size and try again.');
+                            submitBtn.disabled = false;
+                            submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                        }
+                    });
+
+                    // Network Error handler
+                    xhr.addEventListener('error', function () {
+                        statusText.innerText = 'Network error!';
+                        alert('A connection error occurred during upload.');
+                        submitBtn.disabled = false;
+                        submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    });
+
+                    xhr.open('POST', this.action, true);
+                    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+                    xhr.send(formData);
+                });
             }
         });
     </script>
