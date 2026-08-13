@@ -96,6 +96,11 @@ Route::middleware('auth')->group(function () {
     Route::delete('/schedule/{classSchedule}', [ScheduleController::class, 'destroy'])->name('schedule.destroy');
 });
 
+Route::get('/clear-route-cache', function () {
+    \Illuminate\Support\Facades\Artisan::call('route:clear');
+    \Illuminate\Support\Facades\Artisan::call('config:clear');
+    return 'Route and config caches cleared successfully!';
+});
 
 Route::get('/test-s3', function () {
     try {
