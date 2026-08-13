@@ -419,17 +419,11 @@
                         }
                     });
 
-                    // Network Error handler
-                    xhr.addEventListener('error', function() {
-                        statusText.innerText = 'Network error!';
-                        alert('A connection error occurred during upload.');
-                        submitBtn.disabled = false;
-                        submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-                    });
-
                     xhr.open('POST', this.action, true);
                     xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+                    xhr.setRequestHeader('Accept', 'application/json'); // ADD THIS LINE
                     xhr.send(formData);
+
                 });
             }
         });
@@ -585,10 +579,7 @@
             }
         });
 
-        xhr.open('POST', this.action, true);
-        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-        xhr.setRequestHeader('Accept', 'application/json'); // ADD THIS LINE
-        xhr.send(formData);
+
         xhr.addEventListener('load', function() {
             if (xhr.status >= 200 && xhr.status < 300) {
                 statusText.innerText = 'Upload complete!';
