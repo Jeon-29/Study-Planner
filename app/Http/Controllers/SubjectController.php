@@ -173,13 +173,16 @@ class SubjectController extends Controller
 
     public function storeFile(Request $request, $id)
     {
+
         // Validate the incoming input
         $request->validate([
             'title' => 'required|string|max:255',
             'category' => 'required|string',
-            'file' => 'required|file|mimes:pdf,doc,docx,ppt,pptx,xls,xlsx|max:10240', // Max 10MB
+            'file' => 'required|file|mimes:pdf,doc,docx,ppt,pptx,xls,xlsx|max:102400', // Max 10MB
+
         ]);
 
+        set_time_limit(300);
         $subject = Subject::findOrFail($id);
 
         if ($request->hasFile('file')) {

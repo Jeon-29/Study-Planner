@@ -761,6 +761,12 @@
 
             // 2. Intercept form submissions
             document.addEventListener('submit', function(e) {
+                // Skip full-screen loader if the submission is handled by AJAX (e.g., progress bar) or targets #addFileForm
+                if (e.defaultPrevented || e.target.id === 'addFileForm' || e.target.closest(
+                    '#addFileForm')) {
+                    return;
+                }
+
                 // Check if form is valid before showing loader
                 if (e.target.checkValidity()) {
                     showLoader();
