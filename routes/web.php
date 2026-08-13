@@ -96,15 +96,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/schedule/{classSchedule}', [ScheduleController::class, 'destroy'])->name('schedule.destroy');
 });
 
-Route::get('/clear-route-cache', function () {
-    \Illuminate\Support\Facades\Artisan::call('route:clear');
-    \Illuminate\Support\Facades\Artisan::call('config:clear');
-    return 'Route and config caches cleared successfully!';
-});
-
 Route::get('/test-s3', function () {
     try {
-        // We force 'throw' => true so Backblaze gives us the exact error message
         $disk = Storage::build([
             'driver'                  => 's3',
             'key'                     => env('AWS_ACCESS_KEY_ID'),
@@ -113,7 +106,8 @@ Route::get('/test-s3', function () {
             'bucket'                  => env('AWS_BUCKET'),
             'endpoint'                => env('AWS_ENDPOINT'),
             'use_path_style_endpoint' => true,
-            'throw'                   => true, // <--- Forces S3 to reveal hidden errors!
+            'visibility'              => 'public', // <--- Force 'public-read' ACL for Backblaze B2
+            'throw'                   => true,
         ]);
 
         $disk->put('test-upload.txt', 'Connection successful!');
