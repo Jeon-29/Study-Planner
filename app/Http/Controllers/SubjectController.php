@@ -180,10 +180,19 @@ class SubjectController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'category' => 'required|string',
-            'file' => 'required|file|mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,zip,rar,png,jpg,jpeg|max:51224',
+            'file' => 'required|file|mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,zip,rar,png,jpg,jpeg|max:102400',
         ]);
 
         $subject = Subject::findOrFail($id);
+
+
+        // ADD THIS CHECK: If Render/PHP dropped the file due to size, throw a 400 error!
+        if (!$request->hasFile('file')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'The server dropped the file. It exceeds the maximum upload size limit.'
+            ], 400);
+        }
 
         // 1. Ensure file was actually received by PHP
         if (!$request->hasFile('file')) {
