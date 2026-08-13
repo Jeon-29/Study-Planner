@@ -9,6 +9,7 @@ use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TodoController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 /*
 |--------------------------------------------------------------------------
@@ -95,10 +96,35 @@ Route::middleware('auth')->group(function () {
     Route::delete('/schedule/{classSchedule}', [ScheduleController::class, 'destroy'])->name('schedule.destroy');
 });
 
-Route::get('/debug-storage', function () {
-    return [
-        'default_disk' => config('filesystems.default'),
-        'env_disk' => env('FILESYSTEM_DISK'),
-        'is_s3_configured' => !empty(config('filesystems.disks.s3.key')),
-    ];
+
+Route::get('/test-s3', function () {
+    try {
+        // We force 'throw' => true so Backblaze gives us the exact error message
+        $disk = Storage::build([
+            'driver'                  => 's3',
+            'key'                     => env('AWS_ACCESS_KEY_ID'),
+            'secret'                  => env('AWS_SECRET_ACCESS_KEY'),
+            'region'                  => env('AWS_DEFAULT_REGION'),
+            'bucket'                  => env('AWS_BUCKET'),
+            'endpoint'                => env('AWS_ENDPOINT'),
+            'use_path_style_endpoint' => true,
+            'throw'                   => true, // <--- Forces S3 to reveal hidden errors!
+        ]);
+
+        $disk->put('test-upload.txt', 'Connection successful!');
+
+        return response()->json([
+            'status'     => 'SUCCESS',
+            'message'    => 'Uploaded test-upload.txt to Backblaze successfully!',
+            'file_url'   => $disk->url('test-upload.txt'),
+        ]);
+    } catch (\Throwable $e) {
+        return response()->json([
+            'status'        => 'FAILED',
+            'error_type'    => get_class($e),
+            'error_message' => $e->getMessage(),
+        ], 500);
+    }
 });
+
+
