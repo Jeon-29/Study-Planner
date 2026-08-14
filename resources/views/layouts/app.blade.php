@@ -2,18 +2,6 @@
 <html lang="en">
 
 <head>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-WR5H5956N5"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-
-        function gtag() {
-            dataLayer.push(arguments);
-        }
-        gtag('js', new Date());
-
-        gtag('config', 'G-WR5H5956N5');
-    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Dashboard') - Study Planner</title>
@@ -775,7 +763,7 @@
             document.addEventListener('submit', function(e) {
                 // Skip full-screen loader if the submission is handled by AJAX (e.g., progress bar) or targets #addFileForm
                 if (e.defaultPrevented || e.target.id === 'addFileForm' || e.target.closest(
-                        '#addFileForm')) {
+                    '#addFileForm')) {
                     return;
                 }
 
