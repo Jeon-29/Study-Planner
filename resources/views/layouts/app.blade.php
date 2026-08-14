@@ -2,10 +2,6 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Dashboard') - Study Planner</title>
-
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-WR5H5956N5"></script>
     <script>
@@ -18,6 +14,9 @@
 
         gtag('config', 'G-WR5H5956N5');
     </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@yield('title', 'Dashboard') - Study Planner</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="//[unpkg.com/alpinejs](https://unpkg.com/alpinejs)" defer></script>
     <!-- Material Design Icons Font -->
