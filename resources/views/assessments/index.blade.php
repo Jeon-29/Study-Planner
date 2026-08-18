@@ -5,7 +5,7 @@
     <div class="flex items-center justify-between mb-5 p-1">
         <div>
             <h1 class="text-lg font-bold text-[#1C1917] tracking-tight" id="main-page-title">Quiz & Exams</h1>
-            <p class="text-xs font-medium text-[#78716C] mt-0.5" id="main-page-subtitle">Track your assessments</p>
+            <p class="text-xs font-medium text-[#78716C] mt-0.5" id="main-page-subtitle">Track your exams & quizzes</p>
         </div>
 
         <div class="flex items-center bg-stone-200/60 p-1 rounded-full border border-stone-300/50">
@@ -74,21 +74,21 @@
                     <div id="quiz-list-{{ $status }}" class="quiz-sub-list space-y-3 {{ $status !== 'upcoming' ? 'hidden' : '' }}">
                         @forelse($quizzes->get($status, []) as $quiz)
                             <div class="p-4 rounded-[24px] bg-white border border-stone-100 shadow-sm hover:shadow-md transition-all relative overflow-hidden">
-                                <div class="flex justify-between items-start mb-2">
+                                <div class="flex justify-between items-start mb-3">
                                     <div>
-                                        <span class="text-[10px] font-black tracking-wider text-pink-600 uppercase bg-pink-50 px-2 py-0.5 rounded-full border border-pink-100">
+                                        <span class="text-[10px] font-black tracking-wider text-pink-600 uppercase bg-pink-50 px-2.5 py-1 rounded-full border border-pink-100">
                                             {{ $quiz->subject->name ?? 'General Subject' }}
                                         </span>
-                                        <h4 class="text-sm font-black text-stone-800 mt-1">{{ $quiz->title }}</h4>
+                                        <h4 class="text-sm font-black text-stone-800 mt-1.5">{{ $quiz->title }}</h4>
                                     </div>
-                                    <span class="text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase {{ $status === 'finished' ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : ($status === 'overdue' ? 'bg-rose-50 text-rose-600 border border-rose-200' : 'bg-amber-50 text-amber-600 border border-amber-200') }}">
+                                    <span class="text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase {{ $status === 'finished' ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : ($status === 'overdue' ? 'bg-rose-50 text-rose-600 border border-rose-200' : 'bg-pink-50 text-pink-600 border border-pink-200') }}">
                                         {{ $status }}
                                     </span>
                                 </div>
 
-                                <div class="flex items-center justify-between pt-2 border-t border-stone-50 text-xs text-stone-500 font-semibold">
-                                    <div class="flex items-center gap-1">
-                                        <span class="material-icons-round text-sm text-stone-400">schedule</span>
+                                <div class="flex items-center justify-between pt-3 border-t border-stone-100 text-xs">
+                                    <div class="flex items-center gap-1.5 bg-pink-50/80 text-pink-700 px-3 py-1 rounded-full border border-pink-100 font-bold">
+                                        <span class="material-icons-round text-sm text-pink-500">schedule</span>
                                         <span>{{ $quiz->start_time ? \Carbon\Carbon::parse($quiz->start_time)->format('g:ia') : 'TBA' }}</span>
                                     </div>
 
@@ -98,9 +98,9 @@
                                             Mark as Done
                                         </button>
                                     @else
-                                        <div class="flex items-center gap-1">
+                                        <div class="flex items-center gap-1 bg-amber-50 px-3 py-1 rounded-full border border-amber-100">
                                             <span class="material-icons-round text-sm text-amber-500">grade</span>
-                                            <span class="font-bold text-stone-700">Score: {{ $quiz->score !== null ? $quiz->score . '/' . $quiz->total_items : 'Not Graded' }}</span>
+                                            <span class="font-bold text-amber-800">Score: {{ $quiz->score !== null ? $quiz->score . '/' . $quiz->total_items : 'Not Graded' }}</span>
                                         </div>
                                     @endif
                                 </div>
@@ -129,10 +129,10 @@
                             <div class="p-4 rounded-[24px] bg-white border border-stone-100 shadow-sm hover:shadow-md transition-all relative">
                                 <div class="flex justify-between items-start mb-2">
                                     <div>
-                                        <span class="text-[10px] font-black tracking-wider text-purple-600 uppercase bg-purple-50 px-2 py-0.5 rounded-full border border-purple-100">
+                                        <span class="text-[10px] font-black tracking-wider text-purple-600 uppercase bg-purple-50 px-2.5 py-1 rounded-full border border-purple-100">
                                             {{ $exam->subject->name ?? 'General Subject' }}
                                         </span>
-                                        <h4 class="text-sm font-black text-stone-800 mt-1">{{ $exam->title }}</h4>
+                                        <h4 class="text-sm font-black text-stone-800 mt-1.5">{{ $exam->title }}</h4>
                                     </div>
                                     <span class="text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase {{ $status === 'finished' ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : ($status === 'overdue' ? 'bg-rose-50 text-rose-600 border border-rose-200' : 'bg-purple-50 text-purple-600 border border-purple-200') }}">
                                         {{ $status }}
@@ -154,10 +154,11 @@
                                     </div>
                                 </div>
 
-                                <div class="flex items-center justify-between text-xs text-stone-500">
-                                    <span class="text-[11px] text-stone-400 font-medium">
-                                        Time: {{ $exam->start_time ? \Carbon\Carbon::parse($exam->start_time)->format('g:ia') : 'TBA' }}
-                                    </span>
+                                <div class="flex items-center justify-between text-xs pt-1">
+                                    <div class="flex items-center gap-1.5 bg-purple-50 text-purple-700 px-3 py-1 rounded-full border border-purple-100 font-bold">
+                                        <span class="material-icons-round text-sm text-purple-500">schedule</span>
+                                        <span>{{ $exam->start_time ? \Carbon\Carbon::parse($exam->start_time)->format('g:ia') : 'TBA' }}</span>
+                                    </div>
 
                                     @if($status === 'upcoming')
                                         <button type="button" onclick="openScoreModal({{ $exam->id }}, {{ $exam->total_items }})" class="text-[10px] font-bold bg-purple-600 text-white px-3 py-1.5 rounded-full shadow-md hover:bg-purple-700 transition-all flex items-center gap-1">
@@ -165,7 +166,10 @@
                                             Mark as Done
                                         </button>
                                     @else
-                                        <span class="font-black text-stone-800">Score: <span class="text-purple-600">{{ $exam->score !== null ? $exam->score . '/' . $exam->total_items : 'Pending' }}</span></span>
+                                        <div class="flex items-center gap-1 bg-amber-50 px-3 py-1 rounded-full border border-amber-100">
+                                            <span class="material-icons-round text-sm text-amber-500">grade</span>
+                                            <span class="font-bold text-amber-800">Score: {{ $exam->score !== null ? $exam->score . '/' . $exam->total_items : 'Pending' }}</span>
+                                        </div>
                                     @endif
                                 </div>
                             </div>
@@ -183,6 +187,22 @@
         <!-- Inject Modals using Blade Templating -->
         @include('assessments.partials.add-modal')
         @include('assessments.partials.score-modal')
+
+        <!-- CUSTOM RESULT MODAL (Replaces JS Alert) -->
+        <div id="custom-result-modal" class="fixed inset-0 z-50 bg-stone-900/40 backdrop-blur-xs flex items-center justify-center p-4 hidden">
+            <div class="bg-white rounded-[28px] max-w-xs w-full p-6 shadow-2xl border border-stone-100 text-center space-y-4 animate-in fade-in zoom-in duration-200">
+                <div class="w-12 h-12 bg-pink-50 text-pink-600 rounded-2xl mx-auto flex items-center justify-center border border-pink-100 shadow-xs">
+                    <span class="material-icons-round text-2xl">insights</span>
+                </div>
+                <div>
+                    <h3 id="result-modal-title" class="text-base font-black text-stone-800">You scored 0%</h3>
+                    <p id="result-modal-message" class="text-xs font-medium text-stone-500 mt-1">Keep studying, you'll get it next time!</p>
+                </div>
+                <button type="button" onclick="closeCustomResultModal()" class="w-full bg-[#DB2777] hover:bg-[#BE185D] text-white text-xs font-bold py-2.5 rounded-full shadow-md transition-all cursor-pointer">
+                    Close
+                </button>
+            </div>
+        </div>
     </div>
 
     <!-- MAIN UI SWITCH SCRIPT -->
@@ -229,6 +249,22 @@
                     }
                 });
             }
+        }
+
+        // Functions to control the custom result modal
+        function showCustomResultModal(percentage, message) {
+            const modal = document.getElementById('custom-result-modal');
+            const title = document.getElementById('result-modal-title');
+            const desc = document.getElementById('result-modal-message');
+
+            if (title) title.innerText = `You scored ${percentage}%`;
+            if (desc) desc.innerText = message;
+            if (modal) modal.classList.remove('hidden');
+        }
+
+        function closeCustomResultModal() {
+            const modal = document.getElementById('custom-result-modal');
+            if (modal) modal.classList.add('hidden');
         }
     </script>
 @endsection
