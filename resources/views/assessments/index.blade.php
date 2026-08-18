@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="px-4 pt-8 pb-28 max-w-md mx-auto relative">
+    <div class="px-4 pt-8 pb-32 max-w-md mx-auto relative">
 
-        <div class="flex justify-between items-center mb-6 px-1">
+        <div class="flex justify-between items-center mb-5 px-1">
             <div>
                 <h2 class="text-2xl font-black text-[#1C1917] tracking-tight">Assessments</h2>
                 <p class="text-xs text-stone-500 font-medium">Track your Quizzes & Exams</p>
@@ -16,26 +16,27 @@
             </button>
         </div>
 
-        <div class="grid grid-cols-2 gap-3 mb-6">
+        <!-- COMPACT STAT CARDS -->
+        <div class="grid grid-cols-2 gap-3 mb-5">
             <div class="relative p-4 rounded-[24px] bg-white border border-stone-100 shadow-sm overflow-hidden group">
-                <div class="absolute -right-4 -top-4 w-16 h-16 bg-amber-100/80 rounded-full blur-xl group-hover:bg-amber-200 transition-colors"></div>
+                <div class="absolute -right-4 -top-4 w-14 h-14 bg-amber-100/80 rounded-full blur-xl group-hover:bg-amber-200 transition-colors"></div>
                 <div class="relative z-10 flex flex-col">
-                    <div class="w-9 h-9 rounded-xl bg-amber-50 border border-amber-200/60 flex items-center justify-center text-amber-600 mb-2">
-                        <span class="material-icons-round text-lg">quiz</span>
+                    <div class="w-8 h-8 rounded-xl bg-amber-50 border border-amber-200/60 flex items-center justify-center text-amber-600 mb-2">
+                        <span class="material-icons-round text-base">quiz</span>
                     </div>
-                    <span class="text-2xl font-black text-stone-800">{{ $todayQuizzes }}</span>
-                    <span class="text-[11px] font-bold text-stone-400">Quizzes Today</span>
+                    <span class="text-3xl font-black text-stone-800">{{ $todayQuizzes }}</span>
+                    <span class="text-[11px] font-bold text-stone-400 mt-0.5">Quizzes Today</span>
                 </div>
             </div>
 
             <div class="relative p-4 rounded-[24px] bg-white border border-stone-100 shadow-sm overflow-hidden group">
-                <div class="absolute -right-4 -top-4 w-16 h-16 bg-purple-100/80 rounded-full blur-xl group-hover:bg-purple-200 transition-colors"></div>
+                <div class="absolute -right-4 -top-4 w-14 h-14 bg-purple-100/80 rounded-full blur-xl group-hover:bg-purple-200 transition-colors"></div>
                 <div class="relative z-10 flex flex-col">
-                    <div class="w-9 h-9 rounded-xl bg-purple-50 border border-purple-200/60 flex items-center justify-center text-purple-600 mb-2">
-                        <span class="material-icons-round text-lg">school</span>
+                    <div class="w-8 h-8 rounded-xl bg-purple-50 border border-purple-200/60 flex items-center justify-center text-purple-600 mb-2">
+                        <span class="material-icons-round text-base">school</span>
                     </div>
-                    <span class="text-2xl font-black text-stone-800">{{ $todayExams }}</span>
-                    <span class="text-[11px] font-bold text-stone-400">Exams Today</span>
+                    <span class="text-3xl font-black text-stone-800">{{ $todayExams }}</span>
+                    <span class="text-[11px] font-bold text-stone-400 mt-0.5">Exams Today</span>
                 </div>
             </div>
         </div>
@@ -176,8 +177,10 @@
 
     </div>
 
-    <div id="assessment-modal" class="fixed inset-0 bg-stone-900/40 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-4 hidden">
-        <div id="assessment-modal-card" class="bg-white w-full max-w-sm rounded-[32px] p-6 shadow-2xl transform transition-all scale-95 opacity-0">
+    <!-- FIXED MODAL POSITIONING (Clears Bottom Nav & Scrollable) -->
+    <div id="assessment-modal" class="fixed inset-0 bg-stone-900/40 backdrop-blur-sm z-40 flex items-end justify-center pb-32 px-4 hidden overflow-y-auto">
+        <div class="absolute inset-0 pointer-events-auto" onclick="closeAssessmentModal()"></div>
+        <div id="assessment-modal-card" class="relative z-50 bg-white w-full max-w-sm max-h-[75vh] overflow-y-auto rounded-[32px] p-6 shadow-2xl border border-white/80 transform transition-all scale-95 opacity-0 pointer-events-auto">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-lg font-black text-stone-800">Add Assessment</h3>
                 <button onclick="closeAssessmentModal()" class="w-8 h-8 rounded-full bg-stone-100 flex items-center justify-center text-stone-400 hover:text-stone-600">
