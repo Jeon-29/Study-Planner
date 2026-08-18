@@ -10,6 +10,7 @@ use App\Http\Controllers\TodoController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Controllers\AssessmentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -84,6 +85,11 @@ Route::middleware('auth')->group(function () {
         'update',
         'destroy',
     ]);
+
+    // --- Exam/Quiz Routes ---
+    // Inside your auth middleware group (if you have one)
+    Route::get('/assessments', [AssessmentController::class, 'index'])->name('assessments.index');
+    Route::post('/assessments', [AssessmentController::class, 'store'])->name('assessments.store');
 
 
 

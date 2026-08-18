@@ -37,4 +37,9 @@ class Subject extends Model
     {
         return $this->hasMany(File::class);
     }
+
+    public function assessments(): HasMany
+    {
+        return $this->hasMany(Assessment::class);
+    }
 }

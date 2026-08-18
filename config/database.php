@@ -59,10 +59,9 @@ return [
             'prefix_indexes' => true,
             'strict' => true,
             'engine' => null,
-            'options' => [
-                // This line enables SSL/TLS for TiDB
-                PDO::MYSQL_ATTR_SSL_CA => '/etc/ssl/certs/ca-certificates.crt',
-            ],
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+    \Pdo\Mysql::ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+]) : [],
         ],
 
         'mariadb' => [
