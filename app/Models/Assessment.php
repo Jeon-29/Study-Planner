@@ -14,12 +14,12 @@ class Assessment extends Model
         'subject_id',
         'title',
         'type',
-        'status',
         'assessment_date',
         'start_time',
         'room',
         'total_items',
-        'score'
+        'status',
+        'score',
     ];
 
     // An assessment belongs to a specific subject
