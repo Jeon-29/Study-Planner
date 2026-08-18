@@ -4,8 +4,28 @@
     <div id="assessment-main-content" class="space-y-6">
         <div class="px-4 pt-4 pb-32 max-w-md mx-auto relative">
 
-            <!-- REMOVED "Assessments" HEADER, KEPT "Add New" BUTTON ROW -->
-            <div class="flex justify-end items-center mb-4 px-1">
+            <!-- 1. MINIMALIST PAGE HEADER & TABS NAVIGATION -->
+            <div class="flex items-center justify-between mb-5 p-1">
+                <div>
+                    <h1 class="text-lg font-bold text-[#1C1917] tracking-tight" id="main-page-title">Quiz & Exams</h1>
+                    <p class="text-xs font-medium text-[#78716C] mt-0.5" id="main-page-subtitle">Track your assessments</p>
+                </div>
+
+                <!-- MAIN FEATURE SWITCHER TABS (SIMPLE ROUTES) -->
+                <div class="flex items-center bg-stone-200/60 p-1 rounded-full border border-stone-300/50">
+                    <a href="{{ route('todo.index') }}"
+                        class="px-4 py-1.5 rounded-full text-xs font-bold text-stone-500 hover:text-stone-900 transition-all text-center">
+                        ToDo
+                    </a>
+                    <span class="px-4 py-1.5 rounded-full text-xs font-extrabold text-stone-900 bg-white shadow-sm transition-all text-center">
+                        Quiz/Exams
+                    </span>
+                </div>
+            </div>
+
+            <!-- "Exam / Quiz" TEXT & "Add New" BUTTON ROW -->
+            <div class="flex justify-between items-center mb-4 px-1">
+                <span class="text-xs font-bold text-stone-700 uppercase tracking-wider">Exam / Quiz</span>
                 <button type="button" onclick="openAssessmentModal()"
                     class="bg-[#DB2777] hover:bg-[#BE185D] text-white text-xs font-bold px-4 py-2.5 rounded-full shadow-lg shadow-pink-200 transition-all active:scale-95 flex items-center gap-1.5">
                     <span class="material-icons-round text-sm">add</span>
