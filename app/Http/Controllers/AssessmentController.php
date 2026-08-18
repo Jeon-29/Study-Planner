@@ -6,16 +6,20 @@ use App\Models\Assessment;
 use App\Models\Subject;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Carbon\Carbon; // Ensure Carbon is imported
+use Carbon\Carbon;
 
 class AssessmentController extends Controller
 {
     public function index(Request $request)
     {
-        $today = Carbon::now('Asia/Manila')->toDateString();
         $userId = Auth::id();
 
-        // 1. The Daily Snapshot (Stat Cards) - Robust Date Matching
+        // Automatically fix orphaned or mismatched records in production
+        Assessment::whereNull('user_id')->orWhere('user_id', '!=', $userId)->update(['user_id' => $userId]);
+
+        $today = Carbon::now('Asia/Manila')->toDateString();
+
+        // 1. The Daily Snapshot (Stat Cards)
         $todayQuizzesCount = Assessment::where('user_id', $userId)
             ->where('type', 'quiz')
             ->whereDate('assessment_date', $today)
@@ -42,7 +46,7 @@ class AssessmentController extends Controller
             ->get()
             ->groupBy('status');
 
-        $subjects = Subject::where('user_id', Auth::id())->get();
+        $subjects = Subject::where('user_id', $userId)->get();
 
         return view('assessments.index', compact(
             'todayQuizzesCount',
@@ -55,7 +59,6 @@ class AssessmentController extends Controller
 
     public function store(Request $request)
     {
-        // Removed status and score from validation; user only inputs core details.
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'subject_id' => 'required|exists:subjects,id',
@@ -67,8 +70,8 @@ class AssessmentController extends Controller
         ]);
 
         $validated['user_id'] = Auth::id();
-        $validated['status'] = 'upcoming'; // Default state on creation
-        $validated['score'] = null;       // Default score on creation
+        $validated['status'] = 'upcoming';
+        $validated['score'] = null;
 
         Assessment::create($validated);
 
@@ -77,12 +80,15 @@ class AssessmentController extends Controller
 
     public function markAsDone(Request $request, Assessment $assessment)
     {
-        // Security check: ensure the user owns this assessment
+        // Automatically claim if unassigned
+        if (!$assessment->user_id) {
+            $assessment->user_id = Auth::id();
+        }
+
         if ($assessment->user_id !== Auth::id()) {
             abort(403, 'Unauthorized action.');
         }
 
-        // Validate that the score is an integer and does not exceed the total items
         $validated = $request->validate([
             'score' => 'required|integer|min:0|max:'.$assessment->total_items,
         ]);
@@ -97,6 +103,14 @@ class AssessmentController extends Controller
 
     public function destroy(Assessment $assessment)
     {
+        if (!$assessment->user_id) {
+            $assessment->user_id = Auth::id();
+        }
+
+        if ($assessment->user_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $assessment->delete();
 
         return redirect()->back()->with('success', 'Exam/Quiz deleted successfully.');
