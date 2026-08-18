@@ -12,21 +12,19 @@ class AssessmentController extends Controller
 {
     public function index(Request $request)
     {
-        // Force the timezone to Philippine time to ensure "today" is accurate
         $today = Carbon::now('Asia/Manila')->toDateString();
         $userId = Auth::id();
 
+        // 1. The Daily Snapshot (Stat Cards) - Robust Date Matching
         $todayQuizzesCount = Assessment::where('user_id', $userId)
             ->where('type', 'quiz')
-            ->whereDate('assessment_date', '=', $today)
-            ->where('status', 'upcoming')
+            ->whereDate('assessment_date', $today)
             ->count();
 
         $todayExamsCount = Assessment::where('user_id', $userId)
-           ->where('type', 'exam')
-           ->whereDate('assessment_date', '=', $today)
-           ->where('status', 'upcoming')
-           ->count();
+            ->where('type', 'exam')
+            ->whereDate('assessment_date', $today)
+            ->count();
 
         // 2. Fetching & Grouping Quizzes (All)
         $quizzes = Assessment::with('subject')
