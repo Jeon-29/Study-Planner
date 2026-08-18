@@ -6,15 +6,17 @@ use App\Models\Assessment;
 use App\Models\Subject;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon; // Ensure Carbon is imported
 
 class AssessmentController extends Controller
 {
     public function index(Request $request)
     {
-        $today = now()->toDateString();
+        // Force the timezone to Philippine time to ensure "today" is accurate
+        $today = Carbon::now('Asia/Manila')->toDateString();
         $userId = Auth::id();
 
-        // 1. The Daily Snapshot (Stat Cards) - Updated with explicit date string comparison
+        // 1. The Daily Snapshot (Stat Cards)
         $todayQuizzesCount = Assessment::where('user_id', $userId)
             ->where('type', 'quiz')
             ->whereDate('assessment_date', '=', $today)
