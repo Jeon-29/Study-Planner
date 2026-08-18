@@ -51,7 +51,7 @@ class AssessmentController extends Controller
         $subjects = \App\Models\Subject::where('user_id', Auth::id())->get();
 
         // Fixed folder path from 'assessments.index' to 'assessment.index' to match your view directory
-        return view('assessment.index', compact('todayQuizzes', 'todayExams', 'quizzes', 'exams', 'subjects'));
+        return view('assessments.index', compact('todayQuizzes', 'todayExams', 'quizzes', 'exams', 'subjects'));
     }
 
     public function store(Request $request)
@@ -72,6 +72,6 @@ class AssessmentController extends Controller
 
         Assessment::create($validated);
 
-        return redirect()->route('assessment.index')->with('success', 'Assessment added successfully!');
+        return redirect()->route('assessments.index')->with('success', 'Assessment added successfully!');
     }
 }

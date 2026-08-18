@@ -421,7 +421,7 @@
 
         <!-- ASSESSMENTS SECTION (HIDDEN BY DEFAULT) -->
         <div id="hub-section-assessment" class="space-y-4 hidden">
-            @include('assessment.index')
+            @include('assessments.index')
         </div>
 
         <!-- FIXED MODAL POSITIONING -->
@@ -438,7 +438,7 @@
                     </button>
                 </div>
 
-                <form action="{{ route('assessment.store') }}" method="POST" class="space-y-3">
+                <form action="{{ route('assessments.store') }}" method="POST" class="space-y-3">
                     @csrf
                     <div>
                         <label class="block text-[10px] font-black uppercase text-stone-400 mb-1">Title</label>
