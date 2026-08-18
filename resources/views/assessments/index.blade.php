@@ -23,13 +23,13 @@
 
             <div class="flex justify-between items-center mb-4 px-1">
                 <span class="text-xs font-bold text-stone-700 uppercase tracking-wider">Exam / Quiz</span>
-                <button type="button" onclick="openExamQuizModal()" class="bg-[#DB2777] hover:bg-[#BE185D] text-white text-xs font-bold px-4 py-2.5 rounded-full shadow-lg shadow-pink-200 transition-all active:scale-95 flex items-center gap-1.5">
+                <button type="button" onclick="openExamQuizModal()" class="bg-[#DB2777] hover:bg-[#BE185D] text-white text-xs font-bold px-4 py-2.5 rounded-full shadow-lg shadow-pink-200 transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer">
                     <span class="material-icons-round text-sm">add</span>
                     <span>Add New</span>
                 </button>
             </div>
 
-            <!-- STAT CARDS (Unchanged) -->
+            <!-- STAT CARDS -->
             <div class="grid grid-cols-2 gap-3 mb-5">
                 <div class="relative py-1.5 px-3 rounded-[20px] bg-white border border-stone-100 shadow-sm overflow-hidden group flex items-center gap-3">
                     <div class="absolute -right-4 -top-4 w-12 h-12 bg-amber-100/80 rounded-full blur-xl group-hover:bg-amber-200 transition-colors"></div>
@@ -74,48 +74,48 @@
                 @foreach (['upcoming', 'finished', 'overdue'] as $status)
                     <div id="quiz-list-{{ $status }}" class="quiz-sub-list space-y-3 {{ $status !== 'upcoming' ? 'hidden' : '' }}">
                         @forelse($quizzes->get($status, []) as $quiz)
-                            @php
-                                $themeColor = $quiz->subject->color ?? '#DB2777';
-                                $themeBg = $themeColor . '1A'; // 10% opacity hex
-                            @endphp
                             <div class="p-4 rounded-[24px] bg-white border border-stone-100 shadow-sm hover:shadow-md transition-all relative overflow-hidden">
-                                <div class="flex justify-between items-center mb-3">
-                                    <span class="text-[10px] font-black tracking-wider uppercase px-2.5 py-1 rounded-full" style="color: {{ $themeColor }}; background-color: {{ $themeBg }};">
-                                        {{ $quiz->subject->name ?? 'General Subject' }}
+                                <div class="flex justify-between items-start mb-2">
+                                    <div>
+                                        <span class="text-[10px] font-black tracking-wider text-pink-600 uppercase bg-pink-50 px-2.5 py-1 rounded-full border border-pink-100">
+                                            {{ $quiz->subject->name ?? 'General Subject' }}
+                                        </span>
+                                        <h4 class="text-sm font-black text-stone-800 mt-1.5">{{ $quiz->title }}</h4>
+                                    </div>
+                                    <span class="text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase {{ $status === 'finished' ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : ($status === 'overdue' ? 'bg-rose-50 text-rose-600 border border-rose-200' : 'bg-pink-50 text-pink-600 border border-pink-200') }}">
+                                        {{ $status }}
                                     </span>
-
-                                    @if($status === 'finished')
-                                        <span class="text-[10px] font-extrabold px-3 py-1 rounded-full uppercase text-emerald-600 bg-emerald-50 border border-emerald-200">
-                                            FINISHED
-                                        </span>
-                                    @elseif($status === 'overdue')
-                                        <span class="text-[10px] font-extrabold px-3 py-1 rounded-full uppercase text-rose-600 bg-rose-50 border border-rose-200">
-                                            OVERDUE
-                                        </span>
-                                    @else
-                                        <span class="text-[10px] font-extrabold px-3 py-1 rounded-full uppercase" style="color: {{ $themeColor }}; border: 1px solid {{ $themeColor }}40; background-color: white;">
-                                            UPCOMING
-                                        </span>
-                                    @endif
                                 </div>
 
-                                <h4 class="text-[15px] font-black text-stone-800 mb-4">{{ $quiz->title }}</h4>
-
-                                <div class="flex items-center justify-between pt-3 border-t border-stone-100/80">
-                                    <div class="flex items-center gap-1.5 text-stone-500">
-                                        <span class="material-icons-round text-[16px] opacity-70">schedule</span>
-                                        <span class="text-[13px] font-bold">{{ $quiz->start_time ? \Carbon\Carbon::parse($quiz->start_time)->format('g:ia') : 'TBA' }}</span>
+                                <div class="flex items-center justify-between pt-3 mt-3 border-t border-stone-100">
+                                    <div class="flex items-center gap-1.5 text-stone-700 font-bold text-xs">
+                                        <span class="material-icons-round text-sm text-pink-500">schedule</span>
+                                        <span class="text-stone-800 font-extrabold">Time: {{ $quiz->start_time ? \Carbon\Carbon::parse($quiz->start_time)->format('g:ia') : 'TBA' }}</span>
                                     </div>
 
                                     @if($status === 'upcoming')
-                                        <button type="button" onclick="openScoreModal({{ $quiz->id }}, {{ $quiz->total_items }})" class="text-[11px] font-bold text-white px-4 py-1.5 rounded-full shadow-md transition-all flex items-center gap-1.5" style="background-color: {{ $themeColor }};">
+                                        <button type="button" onclick="openScoreModal({{ $quiz->id }}, {{ $quiz->total_items }})" class="text-[10px] font-bold bg-[#DB2777] text-white px-3.5 py-1.5 rounded-full shadow-md hover:bg-[#BE185D] transition-all flex items-center gap-1 cursor-pointer">
                                             <span class="material-icons-round text-[14px]">check_circle</span>
                                             Mark as Done
                                         </button>
+                                    @elseif($status === 'finished')
+                                        <div class="flex items-center gap-3">
+                                            <div class="flex items-center gap-1">
+                                                <span class="material-icons-round text-sm text-amber-500">grade</span>
+                                                <span class="font-black text-stone-800 text-xs">Score: {{ $quiz->score !== null ? $quiz->score . '/' . $quiz->total_items : 'Not Graded' }}</span>
+                                            </div>
+                                            <form action="{{ route('assessments.destroy', $quiz->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this finished quiz?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="p-1.5 rounded-full bg-rose-50 text-rose-600 hover:bg-rose-100 transition-all flex items-center justify-center cursor-pointer" title="Delete">
+                                                    <span class="material-icons-round text-[14px]">delete</span>
+                                                </button>
+                                            </form>
+                                        </div>
                                     @else
-                                        <div class="flex items-center gap-1.5">
-                                            <span class="material-icons-round text-[16px] text-[#F59E0B]">star</span>
-                                            <span class="text-[13px] font-black text-stone-800">Score: {{ $quiz->score !== null ? $quiz->score . '/' . $quiz->total_items : 'N/A' }}</span>
+                                        <div class="flex items-center gap-1">
+                                            <span class="material-icons-round text-sm text-amber-500">grade</span>
+                                            <span class="font-black text-stone-800 text-xs">Score: {{ $quiz->score !== null ? $quiz->score . '/' . $quiz->total_items : 'Not Graded' }}</span>
                                         </div>
                                     @endif
                                 </div>
@@ -141,63 +141,58 @@
                 @foreach (['upcoming', 'finished', 'overdue'] as $status)
                     <div id="exam-list-{{ $status }}" class="exam-sub-list space-y-3 {{ $status !== 'upcoming' ? 'hidden' : '' }}">
                         @forelse($exams->get($status, []) as $exam)
-                            @php
-                                $themeColor = $exam->subject->color ?? '#9333EA';
-                                $themeBg = $themeColor . '1A';
-                            @endphp
                             <div class="p-4 rounded-[24px] bg-white border border-stone-100 shadow-sm hover:shadow-md transition-all relative">
-                                <div class="flex justify-between items-center mb-3">
-                                    <span class="text-[10px] font-black tracking-wider uppercase px-2.5 py-1 rounded-full" style="color: {{ $themeColor }}; background-color: {{ $themeBg }};">
-                                        {{ $exam->subject->name ?? 'General Subject' }}
+                                <div class="flex justify-between items-start mb-2">
+                                    <div>
+                                        <span class="text-[10px] font-black tracking-wider text-purple-600 uppercase bg-purple-50 px-2.5 py-1 rounded-full border border-purple-100">
+                                            {{ $exam->subject->name ?? 'General Subject' }}
+                                        </span>
+                                        <h4 class="text-sm font-black text-stone-800 mt-1.5">{{ $exam->title }}</h4>
+                                    </div>
+                                    <span class="text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase {{ $status === 'finished' ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : ($status === 'overdue' ? 'bg-rose-50 text-rose-600 border border-rose-200' : 'bg-purple-50 text-purple-600 border border-purple-200') }}">
+                                        {{ $status }}
                                     </span>
-
-                                    @if($status === 'finished')
-                                        <span class="text-[10px] font-extrabold px-3 py-1 rounded-full uppercase text-emerald-600 bg-emerald-50 border border-emerald-200">
-                                            FINISHED
-                                        </span>
-                                    @elseif($status === 'overdue')
-                                        <span class="text-[10px] font-extrabold px-3 py-1 rounded-full uppercase text-rose-600 bg-rose-50 border border-rose-200">
-                                            OVERDUE
-                                        </span>
-                                    @else
-                                        <span class="text-[10px] font-extrabold px-3 py-1 rounded-full uppercase" style="color: {{ $themeColor }}; border: 1px solid {{ $themeColor }}40; background-color: white;">
-                                            UPCOMING
-                                        </span>
-                                    @endif
                                 </div>
 
-                                <h4 class="text-[15px] font-black text-stone-800 mb-3">{{ $exam->title }}</h4>
-
-                                <div class="grid grid-cols-3 gap-2 mb-4 p-3 rounded-2xl bg-stone-50 border border-stone-100 text-[11px]">
+                                <div class="grid grid-cols-3 gap-2 my-3 p-2.5 rounded-xl bg-stone-50 border border-stone-100 text-[11px]">
                                     <div class="flex flex-col">
-                                        <span class="text-[9px] text-stone-400 font-bold uppercase mb-0.5">Date</span>
+                                        <span class="text-[9px] text-stone-400 font-bold uppercase">Date</span>
                                         <span class="font-extrabold text-stone-700">{{ \Carbon\Carbon::parse($exam->assessment_date)->format('M d, Y') }}</span>
                                     </div>
                                     <div class="flex flex-col">
-                                        <span class="text-[9px] text-stone-400 font-bold uppercase mb-0.5">Room</span>
+                                        <span class="text-[9px] text-stone-400 font-bold uppercase">Room</span>
                                         <span class="font-extrabold text-stone-700">{{ $exam->room ?? 'TBA' }}</span>
                                     </div>
                                     <div class="flex flex-col">
-                                        <span class="text-[9px] text-stone-400 font-bold uppercase mb-0.5">Total Items</span>
-                                        <span class="font-extrabold text-blue-600">{{ $exam->total_items }} Items</span>
+                                        <span class="text-[9px] text-stone-400 font-bold uppercase">Total Items</span>
+                                        <span class="font-extrabold text-purple-600">{{ $exam->total_items }} Items</span>
                                     </div>
                                 </div>
 
-                                <div class="flex items-center justify-between">
-                                    <span class="text-[13px] text-stone-400 font-medium">
-                                        Time: {{ $exam->start_time ? \Carbon\Carbon::parse($exam->start_time)->format('g:ia') : 'TBA' }}
-                                    </span>
+                                <div class="flex items-center justify-between pt-2 border-t border-stone-100">
+                                    <div class="flex items-center gap-1.5 text-xs">
+                                        <span class="material-icons-round text-sm text-purple-500">schedule</span>
+                                        <span class="font-extrabold text-stone-800">Time: {{ $exam->start_time ? \Carbon\Carbon::parse($exam->start_time)->format('g:ia') : 'TBA' }}</span>
+                                    </div>
 
                                     @if($status === 'upcoming')
-                                        <button type="button" onclick="openScoreModal({{ $exam->id }}, {{ $exam->total_items }})" class="text-[11px] font-bold text-white px-4 py-2 rounded-full shadow-md transition-all flex items-center gap-1.5" style="background-color: {{ $themeColor }};">
+                                        <button type="button" onclick="openScoreModal({{ $exam->id }}, {{ $exam->total_items }})" class="text-[10px] font-bold bg-purple-600 text-white px-3.5 py-1.5 rounded-full shadow-md hover:bg-purple-700 transition-all flex items-center gap-1 cursor-pointer">
                                             <span class="material-icons-round text-[14px]">check_circle</span>
                                             Mark as Done
                                         </button>
-                                    @else
-                                        <div class="flex items-center gap-1.5">
-                                            <span class="material-icons-round text-[16px] text-[#F59E0B]">star</span>
-                                            <span class="text-[13px] font-black text-stone-800">Score: <span style="color: {{ $themeColor }};">{{ $exam->score !== null ? $exam->score . '/' . $exam->total_items : 'N/A' }}</span></span>
+                                    @elseif($status === 'finished')
+                                        <div class="flex items-center gap-3">
+                                            <span class="font-black text-stone-800 text-xs">Score: <span class="text-purple-600">{{ $exam->score !== null ? $exam->score . '/' . $exam->total_items : 'Pending' }}</span></span>
+                                            <form action="{{ route('assessments.destroy', $exam->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this finished exam?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="p-1.5 rounded-full bg-rose-50 text-rose-600 hover:bg-rose-100 transition-all flex items-center justify-center cursor-pointer" title="Delete">
+                                                    <span class="material-icons-round text-[14px]">delete</span>
+                                                </button>
+                                            </form>
                                         </div>
+                                    @else
+                                        <span class="font-black text-stone-800 text-xs">Score: <span class="text-purple-600">{{ $exam->score !== null ? $exam->score . '/' . $exam->total_items : 'Pending' }}</span></span>
                                     @endif
                                 </div>
                             </div>

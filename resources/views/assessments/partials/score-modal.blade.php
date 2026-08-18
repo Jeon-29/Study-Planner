@@ -79,7 +79,7 @@
         let message = "";
         if (percentage >= 90) {
             message = "Excellent work! You crushed it!";
-        } else if (percentage >= 75) {
+        } else if (percentage >= 70) {
             message = "Good job! Solid passing score.";
         } else {
             message = "Keep studying, you'll get it next time!";

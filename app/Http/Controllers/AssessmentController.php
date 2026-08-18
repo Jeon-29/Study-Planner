@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Assessment;
+use App\Models\Subject;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -11,27 +12,20 @@ class AssessmentController extends Controller
     public function index(Request $request)
     {
         $today = now()->toDateString();
-        $userId = Auth::id(); // Utilizing custom auth logic
+        $userId = Auth::id();
 
-        // 1. The Daily Snapshot (Stat Cards)
+        // 1. The Daily Snapshot (Stat Cards) - Updated with explicit date string comparison
         $todayQuizzesCount = Assessment::where('user_id', $userId)
             ->where('type', 'quiz')
-            ->whereDate('assessment_date', $today)
+            ->whereDate('assessment_date', '=', $today)
             ->count();
 
         $todayExamsCount = Assessment::where('user_id', $userId)
             ->where('type', 'exam')
-            ->whereDate('assessment_date', $today)
+            ->whereDate('assessment_date', '=', $today)
             ->count();
 
-        // 2. Actual collection of today's quizzes for listing/iteration
-        $todayQuizzes = Assessment::with('subject')
-            ->where('user_id', $userId)
-            ->where('type', 'quiz')
-            ->whereDate('assessment_date', $today)
-            ->get();
-
-        // 3. Fetching & Grouping Quizzes (All)
+        // 2. Fetching & Grouping Quizzes (All)
         $quizzes = Assessment::with('subject')
             ->where('user_id', $userId)
             ->where('type', 'quiz')
@@ -39,7 +33,7 @@ class AssessmentController extends Controller
             ->get()
             ->groupBy('status');
 
-        // 4. Fetching & Grouping Exams (All)
+        // 3. Fetching & Grouping Exams (All)
         $exams = Assessment::with('subject')
             ->where('user_id', $userId)
             ->where('type', 'exam')
@@ -47,23 +41,11 @@ class AssessmentController extends Controller
             ->get()
             ->groupBy('status');
 
-        $subjects = \App\Models\Subject::where('user_id', Auth::id())->get();
-
-        if ($request->ajax()) {
-            return view('assessments.index', compact(
-                'todayQuizzesCount',
-                'todayExamsCount',
-                'todayQuizzes',
-                'quizzes',
-                'exams',
-                'subjects'
-            ));
-        }
+        $subjects = Subject::where('user_id', Auth::id())->get();
 
         return view('assessments.index', compact(
             'todayQuizzesCount',
             'todayExamsCount',
-            'todayQuizzes',
             'quizzes',
             'exams',
             'subjects'
@@ -74,18 +56,18 @@ class AssessmentController extends Controller
     {
         // Removed status and score from validation; user only inputs core details.
         $validated = $request->validate([
-            'title'           => 'required|string|max:255',
-            'subject_id'      => 'required|exists:subjects,id',
-            'type'            => 'required|in:quiz,exam',
+            'title' => 'required|string|max:255',
+            'subject_id' => 'required|exists:subjects,id',
+            'type' => 'required|in:quiz,exam',
             'assessment_date' => 'required|date',
-            'start_time'      => 'nullable',
-            'room'            => 'nullable|string|max:255',
-            'total_items'     => 'required|integer|min:1',
+            'start_time' => 'nullable',
+            'room' => 'nullable|string|max:255',
+            'total_items' => 'required|integer|min:1',
         ]);
 
         $validated['user_id'] = Auth::id();
-        $validated['status']  = 'upcoming'; // Default state on creation
-        $validated['score']   = null;       // Default score on creation
+        $validated['status'] = 'upcoming'; // Default state on creation
+        $validated['score'] = null;       // Default score on creation
 
         Assessment::create($validated);
 
@@ -101,14 +83,21 @@ class AssessmentController extends Controller
 
         // Validate that the score is an integer and does not exceed the total items
         $validated = $request->validate([
-            'score' => 'required|integer|min:0|max:' . $assessment->total_items,
+            'score' => 'required|integer|min:0|max:'.$assessment->total_items,
         ]);
 
         $assessment->update([
-            'score'  => $validated['score'],
-            'status' => 'finished'
+            'score' => $validated['score'],
+            'status' => 'finished',
         ]);
 
         return redirect()->back()->with('success', 'Assessment marked as finished!');
+    }
+
+    public function destroy(Assessment $assessment)
+    {
+        $assessment->delete();
+
+        return redirect()->back()->with('success', 'Exam/Quiz deleted successfully.');
     }
 }

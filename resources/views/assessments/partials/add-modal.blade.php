@@ -2,7 +2,7 @@
     <div class="absolute inset-0 pointer-events-auto" onclick="closeAssessmentModal()"></div>
     <div id="assessment-modal-card" class="relative z-50 bg-white w-full max-w-sm max-h-[75vh] overflow-y-auto rounded-[32px] p-6 shadow-2xl border border-white/80 transform transition-all scale-95 opacity-0 pointer-events-auto">
         <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-black text-stone-800">Add Assessment</h3>
+            <h3 class="text-lg font-black text-stone-800">Add Exam/Quiz</h3>
             <button type="button" onclick="closeAssessmentModal()" class="w-8 h-8 rounded-full bg-stone-100 flex items-center justify-center text-stone-400 hover:text-stone-600 cursor-pointer">
                 <span class="material-icons-round text-sm">close</span>
             </button>
@@ -56,15 +56,15 @@
             </div>
 
             <button type="submit" class="w-full mt-2 py-3 bg-[#DB2777] hover:bg-[#BE185D] text-white text-xs font-extrabold rounded-xl shadow-lg shadow-pink-200 transition-all cursor-pointer">
-                Save Assessment
+                Save Task
             </button>
         </form>
     </div>
 </div>
 
 <script>
-    if (typeof window.openAssessmentModal !== 'function') {
-        window.openAssessmentModal = function() {
+    if (typeof window.openExamQuizModal !== 'function') {
+        window.openExamQuizModal = function() {
             const modal = document.getElementById('assessment-modal');
             const card = document.getElementById('assessment-modal-card');
             if (!modal || !card) return;
@@ -76,8 +76,8 @@
         }
     }
 
-    if (typeof window.closeAssessmentModal !== 'function') {
-        window.closeAssessmentModal = function() {
+    if (typeof window.closeExamQuizModal !== 'function') {
+        window.closeExamQuizModal = function() {
             const modal = document.getElementById('assessment-modal');
             const card = document.getElementById('assessment-modal-card');
             if (!modal || !card) return;
