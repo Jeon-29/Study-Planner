@@ -85,7 +85,7 @@
                                         <span class="text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase {{ $status === 'finished' ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : ($status === 'overdue' ? 'bg-rose-50 text-rose-600 border border-rose-200' : 'bg-pink-50 text-pink-600 border border-pink-200') }}">
                                             {{ $status }}
                                         </span>
-                                        <form action="{{ route('assessments.destroy', $quiz->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this quiz?');">
+                                        <form action="{{ route('assessments.destroy', $quiz->id) }}" method="POST" onsubmit="confirmDeleteModal(event, '{{ addslashes($quiz->title) }}', this);">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="w-6 h-6 rounded-full bg-stone-100 hover:bg-rose-50 text-stone-400 hover:text-rose-600 flex items-center justify-center transition-all cursor-pointer" title="Delete Quiz">
@@ -147,7 +147,7 @@
                                         <span class="text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase {{ $status === 'finished' ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : ($status === 'overdue' ? 'bg-rose-50 text-rose-600 border border-rose-200' : 'bg-purple-50 text-purple-600 border border-purple-200') }}">
                                             {{ $status }}
                                         </span>
-                                        <form action="{{ route('assessments.destroy', $exam->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this exam?');">
+                                        <form action="{{ route('assessments.destroy', $exam->id) }}" method="POST" onsubmit="confirmDeleteModal(event, '{{ addslashes($exam->title) }}', this);">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="w-6 h-6 rounded-full bg-stone-100 hover:bg-rose-50 text-stone-400 hover:text-rose-600 flex items-center justify-center transition-all cursor-pointer" title="Delete Exam">
@@ -206,7 +206,7 @@
         @include('assessments.partials.add-modal')
         @include('assessments.partials.score-modal')
 
-        <!-- CUSTOM RESULT MODAL (Replaces JS Alert) -->
+        <!-- CUSTOM RESULT MODAL -->
         <div id="custom-result-modal" class="fixed inset-0 z-50 bg-stone-900/40 backdrop-blur-xs flex items-center justify-center p-4 hidden">
             <div class="bg-white rounded-[28px] max-w-xs w-full p-6 shadow-2xl border border-stone-100 text-center space-y-4 animate-in fade-in zoom-in duration-200">
                 <div class="w-12 h-12 bg-pink-50 text-pink-600 rounded-2xl mx-auto flex items-center justify-center border border-pink-100 shadow-xs">
@@ -221,9 +221,30 @@
                 </button>
             </div>
         </div>
+
+        <!-- CUSTOM DELETE CONFIRMATION MODAL -->
+        <div id="custom-delete-modal" class="fixed inset-0 z-50 bg-stone-900/40 backdrop-blur-xs flex items-center justify-center p-4 hidden">
+            <div class="bg-white rounded-[28px] max-w-xs w-full p-6 shadow-2xl border border-stone-100 text-center space-y-5 animate-in fade-in zoom-in duration-200">
+                <div class="w-12 h-12 bg-rose-50 text-rose-600 rounded-2xl mx-auto flex items-center justify-center border border-rose-100 shadow-xs">
+                    <span class="material-icons-round text-2xl">delete_outline</span>
+                </div>
+                <div>
+                    <h3 class="text-base font-black text-stone-800 tracking-tight">DELETE EXAM / QUIZ?</h3>
+                    <p class="text-xs font-medium text-stone-500 mt-1">Remove <span id="delete-item-title" class="font-bold text-stone-700"></span> permanently?</p>
+                </div>
+                <div class="flex items-center gap-2 pt-1">
+                    <button type="button" onclick="closeCustomDeleteModal()" class="flex-1 bg-white hover:bg-stone-50 text-stone-700 border border-stone-200 text-xs font-bold py-2.5 rounded-full shadow-xs transition-all cursor-pointer">
+                        Keep It
+                    </button>
+                    <button type="button" id="confirm-delete-btn" class="flex-1 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold py-2.5 rounded-full shadow-md shadow-rose-200 transition-all cursor-pointer">
+                        Delete
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- MAIN UI SWITCH SCRIPT -->
+    <!-- MAIN UI SWITCH & MODAL SCRIPTS -->
     <script>
         if (typeof window.switchMainTab !== 'function') {
             window.switchMainTab = function(type) {
@@ -284,5 +305,31 @@
             const modal = document.getElementById('custom-result-modal');
             if (modal) modal.classList.add('hidden');
         }
+
+        // Functions to control the custom delete confirmation modal
+        let deleteFormTarget = null;
+
+        function confirmDeleteModal(event, title, formElement) {
+            event.preventDefault();
+            deleteFormTarget = formElement;
+
+            const titleSpan = document.getElementById('delete-item-title');
+            if (titleSpan) titleSpan.innerText = title;
+
+            const modal = document.getElementById('custom-delete-modal');
+            if (modal) modal.classList.remove('hidden');
+        }
+
+        function closeCustomDeleteModal() {
+            const modal = document.getElementById('custom-delete-modal');
+            if (modal) modal.classList.add('hidden');
+            deleteFormTarget = null;
+        }
+
+        document.getElementById('confirm-delete-btn').addEventListener('click', function() {
+            if (deleteFormTarget) {
+                deleteFormTarget.submit();
+            }
+        });
     </script>
 @endsection
