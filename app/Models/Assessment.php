@@ -9,7 +9,7 @@ class Assessment extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
+    protected $guarded = [
         'user_id',
         'subject_id',
         'title',
