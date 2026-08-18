@@ -13,33 +13,33 @@ class AssessmentController extends Controller
         $today = now()->toDateString();
         $userId = Auth::id(); // Using our custom auth setup
 
-        // 1. Fetching Collections for the view and counts for stat cards
-        $todayQuizzesCollection = Assessment::with('subject')
+        // 1. The Daily Snapshot (Stat Cards - renamed to avoid collision)
+        $todayQuizzesCount = Assessment::where('user_id', $userId)
+            ->where('type', 'quiz')
+            ->whereDate('assessment_date', $today)
+            ->count();
+
+        $todayExamsCount = Assessment::where('user_id', $userId)
+            ->where('type', 'exam')
+            ->whereDate('assessment_date', $today)
+            ->count();
+
+        // 2. Actual collection of today's quizzes for listing/iteration
+        $todayQuizzes = Assessment::with('subject')
             ->where('user_id', $userId)
             ->where('type', 'quiz')
             ->whereDate('assessment_date', $today)
             ->get();
 
-        $todayExamsCollection = Assessment::with('subject')
-            ->where('user_id', $userId)
-            ->where('type', 'exam')
-            ->whereDate('assessment_date', $today)
-            ->get();
-
-        // Numeric counts for stat widgets if needed separately
-        $todayQuizzes = $todayQuizzesCollection->count();
-        $todayExams = $todayExamsCollection->count();
-
-        // 2. Fetching & Grouping Quizzes
-        // We eager load 'subject' to avoid the N+1 query problem
+        // 3. Fetching & Grouping Quizzes (All)
         $quizzes = Assessment::with('subject')
             ->where('user_id', $userId)
             ->where('type', 'quiz')
             ->orderBy('assessment_date', 'asc')
             ->get()
-            ->groupBy('status'); // Automatically groups into 'upcoming', 'finished', etc.
+            ->groupBy('status');
 
-        // 3. Fetching & Grouping Exams
+        // 4. Fetching & Grouping Exams (All)
         $exams = Assessment::with('subject')
             ->where('user_id', $userId)
             ->where('type', 'exam')
@@ -47,11 +47,16 @@ class AssessmentController extends Controller
             ->get()
             ->groupBy('status');
 
-
         $subjects = \App\Models\Subject::where('user_id', Auth::id())->get();
 
-        // Fixed folder path from 'assessments.index' to 'assessment.index' to match your view directory
-        return view('assessments.index', compact('todayQuizzes', 'todayExams', 'quizzes', 'exams', 'subjects'));
+        return view('assessments.index', compact(
+            'todayQuizzesCount',
+            'todayExamsCount',
+            'todayQuizzes',
+            'quizzes',
+            'exams',
+            'subjects'
+        ));
     }
 
     public function store(Request $request)
