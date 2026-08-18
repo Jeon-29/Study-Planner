@@ -88,8 +88,8 @@ Route::middleware('auth')->group(function () {
 
     // --- Exam/Quiz Routes ---
     // Inside your auth middleware group (if you have one)
-    Route::get('/assessments', [AssessmentController::class, 'index'])->name('assessments.index');
-    Route::post('/assessments', [AssessmentController::class, 'store'])->name('assessments.store');
+    Route::get('/assessment', [AssessmentController::class, 'index'])->name('assessment.index');
+    Route::post('/assessment', [AssessmentController::class, 'store'])->name('assessment.store');
 
 
 
