@@ -34,33 +34,33 @@
                 </button>
             </div>
 
-            <!-- COMPACT STAT CARDS (REDUCED WIDTH BY 50%) -->
-            <div class="grid grid-cols-2 gap-3 mb-5 max-w-[240px]">
-                <div class="relative p-3 rounded-[20px] bg-white border border-stone-100 shadow-sm overflow-hidden group">
+            <!-- STAT CARDS (REVERTED WIDTH, REDUCED HEIGHT BY 50%) -->
+            <div class="grid grid-cols-2 gap-3 mb-5">
+                <div class="relative py-1.5 px-3 rounded-[20px] bg-white border border-stone-100 shadow-sm overflow-hidden group flex items-center gap-3">
                     <div
                         class="absolute -right-4 -top-4 w-12 h-12 bg-amber-100/80 rounded-full blur-xl group-hover:bg-amber-200 transition-colors">
                     </div>
-                    <div class="relative z-10 flex flex-col">
-                        <div
-                            class="w-7 h-7 rounded-lg bg-amber-50 border border-amber-200/60 flex items-center justify-center text-amber-600 mb-1.5">
-                            <span class="material-icons-round text-sm">quiz</span>
-                        </div>
-                        <span class="text-2xl font-black text-stone-800">{{ $todayQuizzesCount }}</span>
-                        <span class="text-[10px] font-bold text-stone-400 mt-0.5">Quizzes Today</span>
+                    <div
+                        class="relative z-10 w-7 h-7 rounded-lg bg-amber-50 border border-amber-200/60 flex items-center justify-center text-amber-600 shrink-0">
+                        <span class="material-icons-round text-sm">quiz</span>
+                    </div>
+                    <div class="relative z-10 flex flex-col justify-center">
+                        <span class="text-xl font-black text-stone-800 leading-tight">{{ $todayQuizzesCount }}</span>
+                        <span class="text-[10px] font-bold text-stone-400">Quizzes Today</span>
                     </div>
                 </div>
 
-                <div class="relative p-3 rounded-[20px] bg-white border border-stone-100 shadow-sm overflow-hidden group">
+                <div class="relative py-1.5 px-3 rounded-[20px] bg-white border border-stone-100 shadow-sm overflow-hidden group flex items-center gap-3">
                     <div
                         class="absolute -right-4 -top-4 w-12 h-12 bg-purple-100/80 rounded-full blur-xl group-hover:bg-purple-200 transition-colors">
                     </div>
-                    <div class="relative z-10 flex flex-col">
-                        <div
-                            class="w-7 h-7 rounded-lg bg-purple-50 border border-purple-200/60 flex items-center justify-center text-purple-600 mb-1.5">
-                            <span class="material-icons-round text-sm">school</span>
-                        </div>
-                        <span class="text-2xl font-black text-stone-800">{{ $todayExamsCount }}</span>
-                        <span class="text-[10px] font-bold text-stone-400 mt-0.5">Exams Today</span>
+                    <div
+                        class="relative z-10 w-7 h-7 rounded-lg bg-purple-50 border border-purple-200/60 flex items-center justify-center text-purple-600 shrink-0">
+                        <span class="material-icons-round text-sm">school</span>
+                    </div>
+                    <div class="relative z-10 flex flex-col justify-center">
+                        <span class="text-xl font-black text-stone-800 leading-tight">{{ $todayExamsCount }}</span>
+                        <span class="text-[10px] font-bold text-stone-400">Exams Today</span>
                     </div>
                 </div>
             </div>
