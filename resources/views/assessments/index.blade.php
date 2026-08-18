@@ -81,9 +81,18 @@
                                         </span>
                                         <h4 class="text-sm font-black text-stone-800 mt-1.5">{{ $quiz->title }}</h4>
                                     </div>
-                                    <span class="text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase {{ $status === 'finished' ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : ($status === 'overdue' ? 'bg-rose-50 text-rose-600 border border-rose-200' : 'bg-pink-50 text-pink-600 border border-pink-200') }}">
-                                        {{ $status }}
-                                    </span>
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase {{ $status === 'finished' ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : ($status === 'overdue' ? 'bg-rose-50 text-rose-600 border border-rose-200' : 'bg-pink-50 text-pink-600 border border-pink-200') }}">
+                                            {{ $status }}
+                                        </span>
+                                        <form action="{{ route('assessments.destroy', $quiz->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this quiz?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="w-6 h-6 rounded-full bg-stone-100 hover:bg-rose-50 text-stone-400 hover:text-rose-600 flex items-center justify-center transition-all cursor-pointer" title="Delete Quiz">
+                                                <span class="material-icons-round text-xs">delete_outline</span>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </div>
 
                                 <div class="flex items-center justify-between pt-3 border-t border-stone-100 text-xs">
@@ -134,9 +143,18 @@
                                         </span>
                                         <h4 class="text-sm font-black text-stone-800 mt-1.5">{{ $exam->title }}</h4>
                                     </div>
-                                    <span class="text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase {{ $status === 'finished' ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : ($status === 'overdue' ? 'bg-rose-50 text-rose-600 border border-rose-200' : 'bg-purple-50 text-purple-600 border border-purple-200') }}">
-                                        {{ $status }}
-                                    </span>
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase {{ $status === 'finished' ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : ($status === 'overdue' ? 'bg-rose-50 text-rose-600 border border-rose-200' : 'bg-purple-50 text-purple-600 border border-purple-200') }}">
+                                            {{ $status }}
+                                        </span>
+                                        <form action="{{ route('assessments.destroy', $exam->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this exam?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="w-6 h-6 rounded-full bg-stone-100 hover:bg-rose-50 text-stone-400 hover:text-rose-600 flex items-center justify-center transition-all cursor-pointer" title="Delete Exam">
+                                                <span class="material-icons-round text-xs">delete_outline</span>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </div>
 
                                 <div class="grid grid-cols-3 gap-2 my-3 p-2.5 rounded-xl bg-stone-50 border border-stone-100 text-[11px]">
