@@ -90,7 +90,7 @@ Route::middleware('auth')->group(function () {
     // Inside your auth middleware group (if you have one)
     Route::get('/assessments', [AssessmentController::class, 'index'])->name('assessments.index');
     Route::post('/assessments', [AssessmentController::class, 'store'])->name('assessments.store');
-    Route::patch('/assessments/{assessment}/mark-done', [AssessmentController::class, 'markAsDone'])->name('assessments.mark-done');
+    Route::patch('/assessments/{id}/mark-as-done', [AssessmentController::class, 'markAsDone'])->name('assessments.markAsDone');
     Route::delete('/assessments/{assessment}', [AssessmentController::class, 'destroy'])->name('assessments.destroy');
 
 

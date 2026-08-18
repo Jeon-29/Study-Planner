@@ -1,22 +1,25 @@
 <div id="score-modal" class="fixed inset-0 bg-stone-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="absolute inset-0 cursor-pointer" onclick="closeScoreModal()"></div>
-    <div class="relative z-10 bg-white w-full max-w-sm rounded-[32px] p-6 shadow-2xl border border-white/80 text-center transform transition-all">
+    <div class="relative z-10 bg-white w-full max-w-xs rounded-[32px] p-6 shadow-2xl border border-white/80 text-center transform transition-all">
 
         <div class="w-12 h-12 rounded-2xl bg-pink-50 border border-pink-100 flex items-center justify-center text-[#DB2777] mx-auto mb-3 shadow-inner">
             <span class="material-icons-round text-xl">military_tech</span>
         </div>
 
-        <h3 class="text-base font-black text-stone-900 tracking-tight mb-1">Complete Assessment</h3>
+        <h3 class="text-base font-black text-stone-900 tracking-tight mb-1">Complete Exam/Quiz</h3>
         <p class="text-xs text-stone-400 font-bold mb-5">Enter your score for this item</p>
 
         <form id="score-form" method="POST" class="space-y-4">
             @csrf
             @method('PATCH')
 
-            <div class="relative">
-                <input type="number" name="score" id="score-input" required min="0" placeholder="0"
-                    class="w-full text-center py-3.5 rounded-2xl bg-stone-50 border border-stone-200 text-lg font-black text-stone-800 focus:outline-none focus:border-pink-500 transition-all">
-                <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-stone-400" id="total-items-label">/ 10</span>
+            <!-- Centered, 50% narrower input field -->
+            <div class="flex justify-center">
+                <div class="relative w-40">
+                    <input type="number" name="score" id="score-input" required min="0" placeholder="0"
+                        class="w-full text-center py-3 rounded-2xl bg-stone-50 border border-stone-200 text-lg font-black text-stone-800 focus:outline-none focus:border-pink-500 transition-all">
+                    <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-stone-400 pointer-events-none" id="total-items-label">/ 10</span>
+                </div>
             </div>
 
             <div class="grid grid-cols-2 gap-3 pt-2">
