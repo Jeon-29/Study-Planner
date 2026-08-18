@@ -16,16 +16,17 @@ class AssessmentController extends Controller
         $today = Carbon::now('Asia/Manila')->toDateString();
         $userId = Auth::id();
 
-        // 1. The Daily Snapshot (Stat Cards)
         $todayQuizzesCount = Assessment::where('user_id', $userId)
             ->where('type', 'quiz')
             ->whereDate('assessment_date', '=', $today)
+            ->where('status', 'upcoming')
             ->count();
 
         $todayExamsCount = Assessment::where('user_id', $userId)
-            ->where('type', 'exam')
-            ->whereDate('assessment_date', '=', $today)
-            ->count();
+           ->where('type', 'exam')
+           ->whereDate('assessment_date', '=', $today)
+           ->where('status', 'upcoming')
+           ->count();
 
         // 2. Fetching & Grouping Quizzes (All)
         $quizzes = Assessment::with('subject')

@@ -128,17 +128,12 @@
                                                 <span class="font-black text-stone-800 text-xs">Score:
                                                     {{ $quiz->score !== null ? $quiz->score . '/' . $quiz->total_items : 'Not Graded' }}</span>
                                             </div>
-                                            <form action="{{ route('assessments.destroy', $quiz->id) }}" method="POST"
-                                                onsubmit="return confirm('Are you sure you want to delete this finished quiz?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="button"
-                                                    onclick="openDeleteModal({{ $quiz->id }}, '{{ addslashes($quiz->title) }}')"
-                                                    class="p-1.5 rounded-full bg-rose-50 text-rose-600 hover:bg-rose-100 transition-all flex items-center justify-center cursor-pointer"
-                                                    title="Delete">
-                                                    <span class="material-icons-round text-[14px]">delete</span>
-                                                </button>
-                                            </form>
+                                            <button type="button"
+                                                onclick="openDeleteModal({{ $quiz->id }}, '{{ addslashes($quiz->title) }}')"
+                                                class="p-1.5 rounded-full bg-rose-50 text-rose-600 hover:bg-rose-100 transition-all flex items-center justify-center cursor-pointer"
+                                                title="Delete">
+                                                <span class="material-icons-round text-[14px]">delete</span>
+                                            </button>
                                         </div>
                                     @else
                                         <div class="flex items-center gap-1">
@@ -226,17 +221,12 @@
                                         <div class="flex items-center gap-3">
                                             <span class="font-black text-stone-800 text-xs">Score: <span
                                                     class="text-purple-600">{{ $exam->score !== null ? $exam->score . '/' . $exam->total_items : 'Pending' }}</span></span>
-                                            <form action="{{ route('assessments.destroy', $exam->id) }}" method="POST"
-                                                onsubmit="return confirm('Are you sure you want to delete this finished exam?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="button"
-                                                    onclick="openDeleteModal({{ $quiz->id }}, '{{ addslashes($quiz->title) }}')"
-                                                    class="p-1.5 rounded-full bg-rose-50 text-rose-600 hover:bg-rose-100 transition-all flex items-center justify-center cursor-pointer"
-                                                    title="Delete">
-                                                    <span class="material-icons-round text-[14px]">delete</span>
-                                                </button>
-                                            </form>
+                                            <button type="button"
+                                                onclick="openDeleteModal({{ $exam->id }}, '{{ addslashes($exam->title) }}')"
+                                                class="p-1.5 rounded-full bg-rose-50 text-rose-600 hover:bg-rose-100 transition-all flex items-center justify-center cursor-pointer"
+                                                title="Delete">
+                                                <span class="material-icons-round text-[14px]">delete</span>
+                                            </button>
                                         </div>
                                     @else
                                         <span class="font-black text-stone-800 text-xs">Score: <span
@@ -303,6 +293,7 @@
             const modal = document.getElementById('delete-confirm-modal');
             modal.classList.add('hidden');
         }
+
         if (typeof window.switchMainTab !== 'function') {
             window.switchMainTab = function(type) {
                 const quizSec = document.getElementById('section-quiz');
