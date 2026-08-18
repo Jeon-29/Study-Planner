@@ -115,12 +115,20 @@
                                     </div>
 
                                     @if ($status === 'upcoming')
-                                        <button type="button"
-                                            onclick="openScoreModal({{ $quiz->id }}, {{ $quiz->total_items }})"
-                                            class="text-[10px] font-bold bg-[#DB2777] text-white px-3.5 py-1.5 rounded-full shadow-md hover:bg-[#BE185D] transition-all flex items-center gap-1 cursor-pointer">
-                                            <span class="material-icons-round text-[14px]">check_circle</span>
-                                            Mark as Done
-                                        </button>
+                                        <div class="flex items-center gap-2">
+                                            <button type="button"
+                                                onclick="openScoreModal({{ $quiz->id }}, {{ $quiz->total_items }})"
+                                                class="text-[10px] font-bold bg-[#DB2777] text-white px-3 py-1.5 rounded-full shadow-md hover:bg-[#BE185D] transition-all flex items-center gap-1 cursor-pointer">
+                                                <span class="material-icons-round text-[14px]">check_circle</span>
+                                                Mark as Done
+                                            </button>
+                                            <button type="button"
+                                                onclick="openDeleteModal({{ $quiz->id }}, '{{ addslashes($quiz->title) }}')"
+                                                class="p-1.5 rounded-full bg-rose-50 text-rose-600 hover:bg-rose-100 transition-all flex items-center justify-center cursor-pointer"
+                                                title="Delete">
+                                                <span class="material-icons-round text-[14px]">delete</span>
+                                            </button>
+                                        </div>
                                     @elseif($status === 'finished')
                                         <div class="flex items-center gap-3">
                                             <div class="flex items-center gap-1">
@@ -136,10 +144,18 @@
                                             </button>
                                         </div>
                                     @else
-                                        <div class="flex items-center gap-1">
-                                            <span class="material-icons-round text-sm text-amber-500">grade</span>
-                                            <span class="font-black text-stone-800 text-xs">Score:
-                                                {{ $quiz->score !== null ? $quiz->score . '/' . $quiz->total_items : 'Not Graded' }}</span>
+                                        <div class="flex items-center gap-3">
+                                            <div class="flex items-center gap-1">
+                                                <span class="material-icons-round text-sm text-amber-500">grade</span>
+                                                <span class="font-black text-stone-800 text-xs">Score:
+                                                    {{ $quiz->score !== null ? $quiz->score . '/' . $quiz->total_items : 'Not Graded' }}</span>
+                                            </div>
+                                            <button type="button"
+                                                onclick="openDeleteModal({{ $quiz->id }}, '{{ addslashes($quiz->title) }}')"
+                                                class="p-1.5 rounded-full bg-rose-50 text-rose-600 hover:bg-rose-100 transition-all flex items-center justify-center cursor-pointer"
+                                                title="Delete">
+                                                <span class="material-icons-round text-[14px]">delete</span>
+                                            </button>
                                         </div>
                                     @endif
                                 </div>
@@ -211,12 +227,20 @@
                                     </div>
 
                                     @if ($status === 'upcoming')
-                                        <button type="button"
-                                            onclick="openScoreModal({{ $exam->id }}, {{ $exam->total_items }})"
-                                            class="text-[10px] font-bold bg-purple-600 text-white px-3.5 py-1.5 rounded-full shadow-md hover:bg-purple-700 transition-all flex items-center gap-1 cursor-pointer">
-                                            <span class="material-icons-round text-[14px]">check_circle</span>
-                                            Mark as Done
-                                        </button>
+                                        <div class="flex items-center gap-2">
+                                            <button type="button"
+                                                onclick="openScoreModal({{ $exam->id }}, {{ $exam->total_items }})"
+                                                class="text-[10px] font-bold bg-purple-600 text-white px-3 py-1.5 rounded-full shadow-md hover:bg-purple-700 transition-all flex items-center gap-1 cursor-pointer">
+                                                <span class="material-icons-round text-[14px]">check_circle</span>
+                                                Mark as Done
+                                            </button>
+                                            <button type="button"
+                                                onclick="openDeleteModal({{ $exam->id }}, '{{ addslashes($exam->title) }}')"
+                                                class="p-1.5 rounded-full bg-rose-50 text-rose-600 hover:bg-rose-100 transition-all flex items-center justify-center cursor-pointer"
+                                                title="Delete">
+                                                <span class="material-icons-round text-[14px]">delete</span>
+                                            </button>
+                                        </div>
                                     @elseif($status === 'finished')
                                         <div class="flex items-center gap-3">
                                             <span class="font-black text-stone-800 text-xs">Score: <span
@@ -229,8 +253,16 @@
                                             </button>
                                         </div>
                                     @else
-                                        <span class="font-black text-stone-800 text-xs">Score: <span
-                                                class="text-purple-600">{{ $exam->score !== null ? $exam->score . '/' . $exam->total_items : 'Pending' }}</span></span>
+                                        <div class="flex items-center gap-3">
+                                            <span class="font-black text-stone-800 text-xs">Score: <span
+                                                    class="text-purple-600">{{ $exam->score !== null ? $exam->score . '/' . $exam->total_items : 'Pending' }}</span></span>
+                                            <button type="button"
+                                                onclick="openDeleteModal({{ $exam->id }}, '{{ addslashes($exam->title) }}')"
+                                                class="p-1.5 rounded-full bg-rose-50 text-rose-600 hover:bg-rose-100 transition-all flex items-center justify-center cursor-pointer"
+                                                title="Delete">
+                                                <span class="material-icons-round text-[14px]">delete</span>
+                                            </button>
+                                        </div>
                                     @endif
                                 </div>
                             </div>
