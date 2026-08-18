@@ -13,7 +13,6 @@
             @csrf
             @method('PATCH')
 
-            <!-- Centered, 50% narrower input field -->
             <div class="flex justify-center">
                 <div class="relative w-40">
                     <input type="number" name="score" id="score-input" required min="0" placeholder="0"

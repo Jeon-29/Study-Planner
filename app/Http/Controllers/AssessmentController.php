@@ -80,17 +80,11 @@ class AssessmentController extends Controller
 
     public function markAsDone(Request $request, Assessment $assessment)
     {
-        // Automatically claim if unassigned
-        if (!$assessment->user_id) {
-            $assessment->user_id = Auth::id();
-        }
-
         if ($assessment->user_id !== Auth::id()) {
             abort(403, 'Unauthorized action.');
         }
 
-        // Ensure total_items is safely cast to an integer to prevent NumberFormatException
-        $maxItems = (int) ($assessment->total_items ?? 0);
+        $maxItems = (int) $assessment->total_items;
 
         $validated = $request->validate([
             'score' => 'required|integer|min:0|max:' . $maxItems,
