@@ -89,8 +89,11 @@ class AssessmentController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
+        // Ensure total_items is safely cast to an integer to prevent NumberFormatException
+        $maxItems = (int) ($assessment->total_items ?? 0);
+
         $validated = $request->validate([
-            'score' => 'required|integer|min:0|max:'.$assessment->total_items,
+            'score' => 'required|integer|min:0|max:' . $maxItems,
         ]);
 
         $assessment->update([
