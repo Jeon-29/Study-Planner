@@ -55,7 +55,8 @@
 
                 <!-- PENDING & OVERDUE CONTAINER GROUP -->
                 <div id="active-tasks-section" class="space-y-3">
-                    <p id="section-title" class="text-[10px] font-bold text-[#78716C] uppercase tracking-widest px-1">In Progress / Pending</p>
+                    <p id="section-title" class="text-[10px] font-bold text-[#78716C] uppercase tracking-widest px-1">In
+                        Progress / Pending</p>
 
                     @php
                         $allActiveTodos = $pendingTodos->merge($overdueTodos);
@@ -92,36 +93,44 @@
                             class="todo-card relative backdrop-blur-md rounded-[24px] py-4 pl-4 pr-3 flex items-center justify-between gap-3 shadow-sm transition-all duration-150 transform hover:-translate-y-0.5">
 
                             <div class="flex items-start gap-3 flex-1 min-w-0">
-                                <button onclick="openCompleteConfirmModal({{ $todo->id }}, '{{ addslashes($todo->title) }}')"
+                                <button
+                                    onclick="openCompleteConfirmModal({{ $todo->id }}, '{{ addslashes($todo->title) }}')"
                                     class="w-7 h-7 rounded-full border-2 border-white/80 bg-white/20 flex items-center justify-center shrink-0 mt-0.5 transition-transform active:scale-90 hover:bg-white/40">
                                     <div class="w-3 h-3 rounded-full bg-transparent hover:bg-white transition-colors"></div>
                                 </button>
 
                                 <div class="space-y-1 flex-1 min-w-0 pr-1">
-                                    <h4 class="text-sm font-extrabold text-white tracking-tight block truncate text-shadow-sm">
+                                    <h4
+                                        class="text-sm font-extrabold text-white tracking-tight block truncate text-shadow-sm">
                                         {{ $todo->title }}
                                     </h4>
 
                                     <div class="flex items-center space-x-2 text-xs font-bold">
-                                        <span class="text-white/90 font-mono tracking-wide uppercase text-[10px] bg-white/20 px-2 py-0.5 rounded-md">{{ $todo->subject }}</span>
+                                        <span
+                                            class="text-white/90 font-mono tracking-wide uppercase text-[10px] bg-white/20 px-2 py-0.5 rounded-md">{{ $todo->subject }}</span>
                                         @if ($todo->priority)
                                             <span class="text-white/40 font-normal">•</span>
                                             @php
                                                 $priorityColors = [
                                                     'high' => 'bg-rose-500/80 text-white border border-rose-400/50',
                                                     'medium' => 'bg-amber-500/80 text-white border border-amber-400/50',
-                                                    'low' => 'bg-emerald-500/80 text-white border border-emerald-400/50',
+                                                    'low' =>
+                                                        'bg-emerald-500/80 text-white border border-emerald-400/50',
                                                 ];
-                                                $priorityClass = $priorityColors[strtolower($todo->priority)] ?? 'bg-white/25 text-white';
+                                                $priorityClass =
+                                                    $priorityColors[strtolower($todo->priority)] ??
+                                                    'bg-white/25 text-white';
                                             @endphp
-                                            <span class="text-[9px] uppercase px-2 py-0.5 rounded-full font-extrabold {{ $priorityClass }} shadow-sm">
+                                            <span
+                                                class="text-[9px] uppercase px-2 py-0.5 rounded-full font-extrabold {{ $priorityClass }} shadow-sm">
                                                 {{ $todo->priority }}
                                             </span>
                                         @endif
                                     </div>
 
                                     @if ($todo->description)
-                                        <p class="text-[11px] text-white/85 font-medium leading-relaxed line-clamp-2 pt-0.5">
+                                        <p
+                                            class="text-[11px] text-white/85 font-medium leading-relaxed line-clamp-2 pt-0.5">
                                             {{ $todo->description }}
                                         </p>
                                     @endif
@@ -131,24 +140,33 @@
                             <div class="flex items-center space-x-2 shrink-0">
                                 <div class="flex flex-col items-center space-y-1">
                                     @if ($isOverdue)
-                                        <span class="text-[8px] font-black uppercase px-1.5 py-0.5 bg-rose-600 text-white rounded-md tracking-wider shadow-sm">Overdue</span>
+                                        <span
+                                            class="text-[8px] font-black uppercase px-1.5 py-0.5 bg-rose-600 text-white rounded-md tracking-wider shadow-sm">Overdue</span>
                                     @elseif($isToday)
-                                        <span class="text-[8px] font-black uppercase px-1.5 py-0.5 bg-amber-500 text-white rounded-md tracking-wider shadow-sm">Due Today</span>
+                                        <span
+                                            class="text-[8px] font-black uppercase px-1.5 py-0.5 bg-amber-500 text-white rounded-md tracking-wider shadow-sm">Due
+                                            Today</span>
                                     @elseif($isDueSoon)
-                                        <span class="text-[8px] font-black uppercase px-1.5 py-0.5 bg-purple-600 text-white rounded-md tracking-wider shadow-sm">Due Soon</span>
+                                        <span
+                                            class="text-[8px] font-black uppercase px-1.5 py-0.5 bg-purple-600 text-white rounded-md tracking-wider shadow-sm">Due
+                                            Soon</span>
                                     @endif
 
-                                    <div class="w-12 h-12 rounded-2xl bg-white/20 border border-white/30 overflow-hidden flex flex-col items-center text-center shadow-inner">
-                                        <div class="w-full text-[9px] font-extrabold text-white uppercase py-0.5 tracking-wider {{ $isToday ? 'bg-rose-500/80' : ($isOverdue ? 'bg-stone-700/80' : 'bg-black/20') }}">
+                                    <div
+                                        class="w-12 h-12 rounded-2xl bg-white/20 border border-white/30 overflow-hidden flex flex-col items-center text-center shadow-inner">
+                                        <div
+                                            class="w-full text-[9px] font-extrabold text-white uppercase py-0.5 tracking-wider {{ $isToday ? 'bg-rose-500/80' : ($isOverdue ? 'bg-stone-700/80' : 'bg-black/20') }}">
                                             {{ $isToday ? 'Today' : $dueDate->format('M') }}
                                         </div>
-                                        <div class="flex-1 flex items-center justify-center text-sm font-black text-white leading-none pb-0.5">
+                                        <div
+                                            class="flex-1 flex items-center justify-center text-sm font-black text-white leading-none pb-0.5">
                                             {{ $dueDate->format('d') }}
                                         </div>
                                     </div>
 
                                     @if ($todo->due_time)
-                                        <span class="text-[9px] font-bold text-white bg-white/15 px-1.5 py-0.5 rounded-md border border-white/10">
+                                        <span
+                                            class="text-[9px] font-bold text-white bg-white/15 px-1.5 py-0.5 rounded-md border border-white/10">
                                             {{ \Carbon\Carbon::parse($todo->due_time)->format('g:i A') }}
                                         </span>
                                     @endif
@@ -167,7 +185,8 @@
                                             <span class="material-icons-round text-xs">edit</span>
                                             <span>Edit</span>
                                         </button>
-                                        <button onclick="openDeleteConfirmModal({{ $todo->id }}, '{{ addslashes($todo->title) }}')"
+                                        <button
+                                            onclick="openDeleteConfirmModal({{ $todo->id }}, '{{ addslashes($todo->title) }}')"
                                             class="w-full text-left px-3 py-1 text-[11px] font-bold text-rose-600 hover:bg-rose-50 flex items-center space-x-1.5">
                                             <span class="material-icons-round text-xs">delete</span>
                                             <span>Delete</span>
@@ -177,13 +196,15 @@
                             </div>
                         </div>
                     @empty
-                        <div id="active-empty-state" class="p-8 text-center border border-dashed border-stone-200 bg-stone-50/40 rounded-3xl">
+                        <div id="active-empty-state"
+                            class="p-8 text-center border border-dashed border-stone-200 bg-stone-50/40 rounded-3xl">
                             <span class="material-icons-round text-xl text-stone-300">assignment</span>
                             <p class="text-[11px] text-[#78716C] font-medium mt-1">No active tasks found!</p>
                         </div>
                     @endforelse
 
-                    <div id="filtered-empty-state" class="hidden p-8 text-center border border-dashed border-stone-200 bg-stone-50/40 rounded-3xl">
+                    <div id="filtered-empty-state"
+                        class="hidden p-8 text-center border border-dashed border-stone-200 bg-stone-50/40 rounded-3xl">
                         <span class="material-icons-round text-xl text-stone-300">filter_list</span>
                         <p class="text-[11px] text-[#78716C] font-medium mt-1">No tasks match this filter category.</p>
                     </div>
@@ -195,9 +216,11 @@
                         class="w-full flex items-center justify-between py-2 px-1 text-stone-500 hover:text-stone-800 transition-colors focus:outline-none">
                         <div class="flex items-center space-x-2">
                             <span class="material-icons-round text-sm">check_circle</span>
-                            <span class="text-[10px] font-bold uppercase tracking-widest">Completed To-Dos ({{ $doneTodos->count() }})</span>
+                            <span class="text-[10px] font-bold uppercase tracking-widest">Completed To-Dos
+                                ({{ $doneTodos->count() }})</span>
                         </div>
-                        <span id="accordion-arrow" class="material-icons-round text-base transition-transform duration-200 rotate-180">expand_more</span>
+                        <span id="accordion-arrow"
+                            class="material-icons-round text-base transition-transform duration-200 rotate-180">expand_more</span>
                     </button>
 
                     <div id="completed-container" class="mt-3 space-y-3 transition-all duration-300">
@@ -214,18 +237,22 @@
                                         <span class="material-icons-round text-xs">check</span>
                                     </div>
                                     <div class="min-w-0">
-                                        <h4 class="text-xs font-bold text-stone-700 line-through truncate">{{ $todo->title }}</h4>
-                                        <span style="color: {{ $baseHex }};" class="text-[9px] font-mono font-extrabold uppercase tracking-wide">{{ $todo->subject }}</span>
+                                        <h4 class="text-xs font-bold text-stone-700 line-through truncate">
+                                            {{ $todo->title }}</h4>
+                                        <span style="color: {{ $baseHex }};"
+                                            class="text-[9px] font-mono font-extrabold uppercase tracking-wide">{{ $todo->subject }}</span>
                                     </div>
                                 </div>
 
-                                <button onclick="openDeleteConfirmModal({{ $todo->id }}, '{{ addslashes($todo->title) }}')"
+                                <button
+                                    onclick="openDeleteConfirmModal({{ $todo->id }}, '{{ addslashes($todo->title) }}')"
                                     class="w-6 h-6 rounded-full hover:bg-rose-50 text-stone-400 hover:text-rose-600 flex items-center justify-center transition-colors">
                                     <span class="material-icons-round text-xs">delete</span>
                                 </button>
                             </div>
                         @empty
-                            <p id="completed-empty-text" class="text-[11px] text-stone-400 italic font-medium px-1 pt-1">No completed tasks recorded yet.</p>
+                            <p id="completed-empty-text" class="text-[11px] text-stone-400 italic font-medium px-1 pt-1">
+                                No completed tasks recorded yet.</p>
                         @endforelse
                     </div>
                 </div>
@@ -250,28 +277,36 @@
     <!-- MODAL INSERTS (COMPLETE, EDIT, DELETE) -->
     <div id="complete-confirm-modal"
         class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/20 backdrop-blur-sm">
-        <div class="bg-white/80 backdrop-blur-xl w-full max-w-xs rounded-3xl border border-white/60 p-5 text-center shadow-xl">
+        <div
+            class="bg-white/80 backdrop-blur-xl w-full max-w-xs rounded-3xl border border-white/60 p-5 text-center shadow-xl">
             <h3 class="text-xs font-bold text-stone-900 uppercase tracking-wider">Complete Task?</h3>
-            <p class="text-[10px] text-stone-500 mt-1 font-medium"><span id="complete-task-title" class="font-bold text-stone-800"></span></p>
+            <p class="text-[10px] text-stone-500 mt-1 font-medium"><span id="complete-task-title"
+                    class="font-bold text-stone-800"></span></p>
             <form id="complete-todo-form" method="POST" class="mt-4 flex items-center justify-center space-x-2.5">
                 @csrf @method('PATCH')
                 <button type="button" onclick="closeCompleteConfirmModal()"
-                    class="w-1/2 py-2 text-[10px] font-bold text-stone-500 bg-stone-50 border border-stone-200 rounded-full">Not Yet</button>
-                <button type="submit" class="w-1/2 py-2 text-[10px] font-bold text-white bg-blue-600 rounded-full">Complete</button>
+                    class="w-1/2 py-2 text-[10px] font-bold text-stone-500 bg-stone-50 border border-stone-200 rounded-full">Not
+                    Yet</button>
+                <button type="submit"
+                    class="w-1/2 py-2 text-[10px] font-bold text-white bg-blue-600 rounded-full">Complete</button>
             </form>
         </div>
     </div>
 
     <div id="delete-confirm-modal"
         class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/20 backdrop-blur-sm">
-        <div class="bg-white/80 backdrop-blur-xl w-full max-w-xs rounded-3xl border border-white/60 p-5 text-center shadow-xl">
+        <div
+            class="bg-white/80 backdrop-blur-xl w-full max-w-xs rounded-3xl border border-white/60 p-5 text-center shadow-xl">
             <h3 class="text-xs font-bold text-stone-900 uppercase tracking-wider text-rose-600">Delete To-Do?</h3>
-            <p class="text-[10px] text-stone-500 mt-1 font-medium">Remove <span id="delete-task-title" class="font-bold text-stone-800"></span> permanently?</p>
+            <p class="text-[10px] text-stone-500 mt-1 font-medium">Remove <span id="delete-task-title"
+                    class="font-bold text-stone-800"></span> permanently?</p>
             <form id="delete-todo-form" method="POST" class="mt-4 flex items-center justify-center space-x-2.5">
                 @csrf @method('DELETE')
                 <button type="button" onclick="closeDeleteConfirmModal()"
-                    class="w-1/2 py-2 text-[10px] font-bold text-stone-500 bg-stone-50 border border-stone-200 rounded-full">Keep It</button>
-                <button type="submit" class="w-1/2 py-2 text-[10px] font-bold text-white bg-rose-600 rounded-full">Delete</button>
+                    class="w-1/2 py-2 text-[10px] font-bold text-stone-500 bg-stone-50 border border-stone-200 rounded-full">Keep
+                    It</button>
+                <button type="submit"
+                    class="w-1/2 py-2 text-[10px] font-bold text-white bg-rose-600 rounded-full">Delete</button>
             </form>
         </div>
     </div>
@@ -298,12 +333,14 @@
             <form id="edit-todo-form" method="POST" class="space-y-4">
                 @csrf @method('PUT')
                 <div>
-                    <label class="block text-[10px] font-bold text-[#78716C] uppercase tracking-wider mb-1 px-1">Title</label>
+                    <label
+                        class="block text-[10px] font-bold text-[#78716C] uppercase tracking-wider mb-1 px-1">Title</label>
                     <input type="text" id="edit-title" name="title" required
                         class="w-full h-10 px-3.5 bg-stone-50/50 border border-stone-200/80 rounded-xl text-xs font-medium focus:outline-none focus:border-[#DB2777] focus:bg-white transition-all">
                 </div>
                 <div>
-                    <label class="block text-[10px] font-bold text-[#78716C] uppercase tracking-wider mb-1 px-1">Subject</label>
+                    <label
+                        class="block text-[10px] font-bold text-[#78716C] uppercase tracking-wider mb-1 px-1">Subject</label>
                     <div class="relative">
                         <select id="edit-subject" name="subject" required
                             class="w-full h-10 px-3.5 bg-stone-50/50 border border-stone-200/80 rounded-xl text-xs font-medium text-stone-700 appearance-none focus:outline-none focus:border-[#DB2777] focus:bg-white transition-all">
@@ -311,32 +348,40 @@
                                 <option value="{{ $code }}">{{ $code }}</option>
                             @endforeach
                         </select>
-                        <span class="material-icons-round text-base text-stone-400 absolute right-3.5 top-2.5 pointer-events-none">expand_more</span>
+                        <span
+                            class="material-icons-round text-base text-stone-400 absolute right-3.5 top-2.5 pointer-events-none">expand_more</span>
                     </div>
                 </div>
                 <div>
-                    <label class="block text-[10px] font-bold text-[#78716C] uppercase tracking-wider mb-1 px-1">Description</label>
+                    <label
+                        class="block text-[10px] font-bold text-[#78716C] uppercase tracking-wider mb-1 px-1">Description</label>
                     <textarea id="edit-description" name="description" rows="2"
                         class="w-full p-3 bg-stone-50/50 border border-stone-200/80 rounded-xl text-xs font-medium focus:outline-none focus:border-[#DB2777] focus:bg-white transition-all resize-none"></textarea>
                 </div>
                 <div>
-                    <label class="block text-[10px] font-bold text-[#78716C] uppercase tracking-wider mb-1 px-1">Due Date & time</label>
+                    <label class="block text-[10px] font-bold text-[#78716C] uppercase tracking-wider mb-1 px-1">Due Date &
+                        time</label>
                     <div class="grid grid-cols-2 gap-2.5">
                         <div class="relative flex items-center">
                             <input type="date" id="edit-due-date" name="due_date" required
                                 class="w-full h-11 pl-9 pr-3 bg-white border border-stone-200 rounded-full text-xs font-semibold text-stone-700 shadow-sm focus:outline-none focus:border-[#DB2777] transition-all">
-                            <span class="material-icons-round text-base text-stone-500 absolute left-3.5 pointer-events-none">calendar_today</span>
+                            <span
+                                class="material-icons-round text-base text-stone-500 absolute left-3.5 pointer-events-none">calendar_today</span>
                         </div>
                         <div class="relative flex items-center">
                             <input type="time" id="edit-due-time" name="due_time" required
                                 class="w-full h-11 pl-9 pr-3 bg-white border border-stone-200 rounded-full text-xs font-semibold text-stone-700 shadow-sm focus:outline-none focus:border-[#DB2777] transition-all">
-                            <span class="material-icons-round text-base text-stone-500 absolute left-3.5 pointer-events-none">access_time</span>
+                            <span
+                                class="material-icons-round text-base text-stone-500 absolute left-3.5 pointer-events-none">access_time</span>
                         </div>
                     </div>
                 </div>
                 <div class="pt-2 flex items-center space-x-2">
-                    <button type="button" onclick="closeEditModal()" class="flex-1 h-10 rounded-xl border border-stone-200 text-xs font-bold text-stone-600 hover:bg-stone-50 transition">Cancel</button>
-                    <button type="submit" class="flex-1 h-10 rounded-xl bg-[#1C1917] hover:bg-[#2E2925] text-xs font-bold text-white shadow-md transition">Save Changes</button>
+                    <button type="button" onclick="closeEditModal()"
+                        class="flex-1 h-10 rounded-xl border border-stone-200 text-xs font-bold text-stone-600 hover:bg-stone-50 transition">Cancel</button>
+                    <button type="submit"
+                        class="flex-1 h-10 rounded-xl bg-[#1C1917] hover:bg-[#2E2925] text-xs font-bold text-white shadow-md transition">Save
+                        Changes</button>
                 </div>
             </form>
         </div>
@@ -359,8 +404,10 @@
                 viewTodo.classList.remove('hidden');
                 viewAssessments.classList.add('hidden');
 
-                btnTodo.className = "px-4 py-1.5 rounded-full text-xs font-extrabold text-stone-900 bg-white shadow-sm transition-all";
-                btnAssessments.className = "px-4 py-1.5 rounded-full text-xs font-bold text-stone-500 hover:text-stone-900 transition-all";
+                btnTodo.className =
+                    "px-4 py-1.5 rounded-full text-xs font-extrabold text-stone-900 bg-white shadow-sm transition-all";
+                btnAssessments.className =
+                    "px-4 py-1.5 rounded-full text-xs font-bold text-stone-500 hover:text-stone-900 transition-all";
 
                 pageTitle.textContent = "To-Do List";
                 pageSubtitle.textContent = "Manage and track your coursework";
@@ -368,22 +415,27 @@
                 viewTodo.classList.add('hidden');
                 viewAssessments.classList.remove('hidden');
 
-                btnAssessments.className = "px-4 py-1.5 rounded-full text-xs font-extrabold text-stone-900 bg-white shadow-sm transition-all";
-                btnTodo.className = "px-4 py-1.5 rounded-full text-xs font-bold text-stone-500 hover:text-stone-900 transition-all";
+                btnAssessments.className =
+                    "px-4 py-1.5 rounded-full text-xs font-extrabold text-stone-900 bg-white shadow-sm transition-all";
+                btnTodo.className =
+                    "px-4 py-1.5 rounded-full text-xs font-bold text-stone-500 hover:text-stone-900 transition-all";
 
                 pageTitle.textContent = "Quiz & Exams";
                 pageSubtitle.textContent = "Track upcoming quizzes, exams, and test metrics";
 
                 // Lazy load assessment content via independent controller route if not loaded yet
+                // Inside your Blade script block:
                 if (!assessmentsLoaded) {
-                    fetch("{{ route('assessments.index') }}")
+                    fetch("{{ route('assessments.index') }}", {
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        })
                         .then(response => response.text())
                         .then(html => {
-                            // Extract main container content or inner section if it renders full layout layout wrapper
                             const parser = new DOMParser();
                             const doc = parser.parseFromString(html, 'text/html');
-                            // Target main content or wrapper inside assessments view
-                            const content = doc.querySelector('main') || doc.body;
+                            const content = doc.querySelector('#assessment-main-content') || doc.body;
                             document.getElementById('assessment-container-panel').innerHTML = content.innerHTML;
                             assessmentsLoaded = true;
                         })
@@ -399,15 +451,19 @@
         // FILTER TASKS FUNCTIONALITY
         function filterTasks(status, pillElement) {
             document.querySelectorAll('.stat-pill').forEach(pill => {
-                pill.className = "stat-pill bg-stone-100/50 border border-stone-200 p-2.5 rounded-full text-center transition-all transform active:scale-95 focus:outline-none";
+                pill.className =
+                    "stat-pill bg-stone-100/50 border border-stone-200 p-2.5 rounded-full text-center transition-all transform active:scale-95 focus:outline-none";
             });
 
             if (status === 'pending') {
-                pillElement.className = "stat-pill bg-amber-500/10 border-2 border-amber-500/30 p-2.5 rounded-full text-center transition-all transform active:scale-95 focus:outline-none ring-2 ring-amber-500/20";
+                pillElement.className =
+                    "stat-pill bg-amber-500/10 border-2 border-amber-500/30 p-2.5 rounded-full text-center transition-all transform active:scale-95 focus:outline-none ring-2 ring-amber-500/20";
             } else if (status === 'done') {
-                pillElement.className = "stat-pill bg-emerald-500/10 border-2 border-emerald-500/30 p-2.5 rounded-full text-center transition-all transform active:scale-95 focus:outline-none ring-2 ring-emerald-500/20";
+                pillElement.className =
+                    "stat-pill bg-emerald-500/10 border-2 border-emerald-500/30 p-2.5 rounded-full text-center transition-all transform active:scale-95 focus:outline-none ring-2 ring-emerald-500/20";
             } else if (status === 'overdue') {
-                pillElement.className = "stat-pill bg-rose-500/10 border-2 border-rose-500/30 p-2.5 rounded-full text-center transition-all transform active:scale-95 focus:outline-none ring-2 ring-rose-500/20";
+                pillElement.className =
+                    "stat-pill bg-rose-500/10 border-2 border-rose-500/30 p-2.5 rounded-full text-center transition-all transform active:scale-95 focus:outline-none ring-2 ring-rose-500/20";
             }
 
             const activeSection = document.getElementById('active-tasks-section');

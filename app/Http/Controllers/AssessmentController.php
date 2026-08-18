@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 
 class AssessmentController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $today = now()->toDateString();
         $userId = Auth::id(); // Using our custom auth setup
@@ -48,6 +48,18 @@ class AssessmentController extends Controller
             ->groupBy('status');
 
         $subjects = \App\Models\Subject::where('user_id', Auth::id())->get();
+
+        // Return a partial view when requested asynchronously via the tab switcher fetch call
+        if ($request->ajax()) {
+            return view('assessments.index', compact(
+                'todayQuizzesCount',
+                'todayExamsCount',
+                'todayQuizzes',
+                'quizzes',
+                'exams',
+                'subjects'
+            ));
+        }
 
         return view('assessments.index', compact(
             'todayQuizzesCount',
