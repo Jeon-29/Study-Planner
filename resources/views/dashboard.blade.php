@@ -312,7 +312,7 @@
         <!-- Subject Cards Stack -->
         <div class="space-y-3">
             @forelse($todaysSubjects as $subject)
-                <a href="{{ route('subject.index') }}"
+                <a href="{{ route('subject.show', $subject->id) }}"
                     class="relative flex items-center justify-between p-4 rounded-[24px] bg-white border border-stone-100 shadow-sm hover:shadow-lg hover:-translate-y-0.5 hover:border-pink-200 transition-all duration-300 group overflow-hidden">
 
                     <!-- Ambient Glow inside the card for that premium glass feel -->
