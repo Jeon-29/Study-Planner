@@ -28,7 +28,7 @@
                             class="w-8 h-8 rounded-xl bg-amber-50 border border-amber-200/60 flex items-center justify-center text-amber-600 mb-2">
                             <span class="material-icons-round text-base">quiz</span>
                         </div>
-                        <span class="text-3xl font-black text-stone-800">{{ $todayQuizzes }}</span>
+                        <span class="text-3xl font-black text-stone-800">{{ $todayQuizzesCount }}</span>
                         <span class="text-[11px] font-bold text-stone-400 mt-0.5">Quizzes Today</span>
                     </div>
                 </div>
@@ -42,7 +42,7 @@
                             class="w-8 h-8 rounded-xl bg-purple-50 border border-purple-200/60 flex items-center justify-center text-purple-600 mb-2">
                             <span class="material-icons-round text-base">school</span>
                         </div>
-                        <span class="text-3xl font-black text-stone-800">{{ $todayExams }}</span>
+                        <span class="text-3xl font-black text-stone-800">{{ $todayExamsCount }}</span>
                         <span class="text-[11px] font-bold text-stone-400 mt-0.5">Exams Today</span>
                     </div>
                 </div>

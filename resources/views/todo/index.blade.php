@@ -7,14 +7,14 @@
     <div class="flex items-center justify-between mb-5 p-1">
         <div>
             <h1 class="text-lg font-bold text-[#1C1917] tracking-tight" id="main-page-title">To-Do List</h1>
-            <p class="text-xs font-medium text-[#78716C] mt-0.5" id="main-page-subtitle">Manage and track your coursework</p>
+            <p class="text-xs font-medium text-[#78716C] mt-0.5" id="main-page-subtitle">Track your coursework</p>
         </div>
 
         <!-- MAIN FEATURE SWITCHER TABS -->
         <div class="flex items-center bg-stone-200/60 p-1 rounded-full border border-stone-300/50">
             <button onclick="switchMainTab('todo', this)" id="tab-btn-todo"
                 class="px-4 py-1.5 rounded-full text-xs font-extrabold text-stone-900 bg-white shadow-sm transition-all">
-                To-Do
+                ToDo
             </button>
             <button onclick="switchMainTab('assessments', this)" id="tab-btn-assessments"
                 class="px-4 py-1.5 rounded-full text-xs font-bold text-stone-500 hover:text-stone-900 transition-all">
