@@ -14,12 +14,10 @@ class AssessmentController extends Controller
     {
         $userId = Auth::id();
 
-        // Automatically fix orphaned or mismatched records in production
         Assessment::whereNull('user_id')->orWhere('user_id', '!=', $userId)->update(['user_id' => $userId]);
 
         $today = Carbon::now('Asia/Manila')->toDateString();
 
-        // 1. The Daily Snapshot (Stat Cards)
         $todayQuizzesCount = Assessment::where('user_id', $userId)
             ->where('type', 'quiz')
             ->whereDate('assessment_date', $today)
@@ -30,7 +28,6 @@ class AssessmentController extends Controller
             ->whereDate('assessment_date', $today)
             ->count();
 
-        // 2. Fetching & Grouping Quizzes (All)
         $quizzes = Assessment::with('subject')
             ->where('user_id', $userId)
             ->where('type', 'quiz')
@@ -38,7 +35,6 @@ class AssessmentController extends Controller
             ->get()
             ->groupBy('status');
 
-        // 3. Fetching & Grouping Exams (All)
         $exams = Assessment::with('subject')
             ->where('user_id', $userId)
             ->where('type', 'exam')
@@ -87,7 +83,6 @@ class AssessmentController extends Controller
 
     public function markAsDone(Request $request, Assessment $assessment)
     {
-        // Force-sync ownership to the current user to completely prevent 403 errors
         if ($assessment->user_id !== Auth::id()) {
             $assessment->user_id = Auth::id();
             $assessment->save();
@@ -109,7 +104,6 @@ class AssessmentController extends Controller
 
     public function destroy(Assessment $assessment)
     {
-        // Force-sync ownership to the current user to completely prevent 403 errors
         if ($assessment->user_id !== Auth::id()) {
             $assessment->user_id = Auth::id();
             $assessment->save();
