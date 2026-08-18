@@ -10,16 +10,15 @@
             <p class="text-xs font-medium text-[#78716C] mt-0.5" id="main-page-subtitle">Track your coursework</p>
         </div>
 
-        <!-- MAIN FEATURE SWITCHER TABS -->
+        <!-- MAIN FEATURE SWITCHER TABS (SIMPLE ROUTES) -->
         <div class="flex items-center bg-stone-200/60 p-1 rounded-full border border-stone-300/50">
-            <button onclick="switchMainTab('todo', this)" id="tab-btn-todo"
-                class="px-4 py-1.5 rounded-full text-xs font-extrabold text-stone-900 bg-white shadow-sm transition-all">
+            <span class="px-4 py-1.5 rounded-full text-xs font-extrabold text-stone-900 bg-white shadow-sm transition-all text-center">
                 ToDo
-            </button>
-            <button onclick="switchMainTab('assessments', this)" id="tab-btn-assessments"
-                class="px-4 py-1.5 rounded-full text-xs font-bold text-stone-500 hover:text-stone-900 transition-all">
+            </span>
+            <a href="{{ route('assessments.index') }}"
+                class="px-4 py-1.5 rounded-full text-xs font-bold text-stone-500 hover:text-stone-900 transition-all text-center">
                 Quiz/Exams
-            </button>
+            </a>
         </div>
     </div>
 
@@ -27,24 +26,24 @@
     <div id="tab-content-wrapper">
 
         <!-- ========================================== -->
-        <!-- TAB 1: TO-DO VIEW (DEFAULT)                -->
+        <!-- TAB 1: TO-DO VIEW                          -->
         <!-- ========================================== -->
         <div id="view-todo" class="space-y-6">
 
             <!-- 2. QUICK TASK AGGREGATE SUMMARY STRIP (FILTERABLE TABS) -->
             <div class="grid grid-cols-3 gap-2.5">
                 <button onclick="filterTasks('pending', this)" id="pill-pending"
-                    class="stat-pill bg-amber-500/10 border-2 border-amber-500/30 p-2.5 rounded-full text-center transition-all transform active:scale-95 focus:outline-none ring-2 ring-amber-500/20">
+                    class="stat-pill bg-amber-500/10 border-2 border-amber-500/30 p-2.5 rounded-full text-center transition-all transform active:scale-95 focus:outline-none ring-2 ring-amber-500/20 cursor-pointer">
                     <span class="block text-xs font-extrabold text-amber-700">{{ $pendingTodos->count() }}</span>
                     <span class="block text-[9px] font-bold uppercase tracking-wider text-amber-600 mt-0.5">Pending</span>
                 </button>
                 <button onclick="filterTasks('done', this)" id="pill-done"
-                    class="stat-pill bg-stone-100/50 border border-stone-200 p-2.5 rounded-full text-center transition-all transform active:scale-95 focus:outline-none">
+                    class="stat-pill bg-stone-100/50 border border-stone-200 p-2.5 rounded-full text-center transition-all transform active:scale-95 focus:outline-none cursor-pointer">
                     <span class="block text-xs font-extrabold text-stone-700">{{ $doneTodos->count() }}</span>
                     <span class="block text-[9px] font-bold uppercase tracking-wider text-stone-600 mt-0.5">Done</span>
                 </button>
                 <button onclick="filterTasks('overdue', this)" id="pill-overdue"
-                    class="stat-pill bg-stone-100/50 border border-stone-200 p-2.5 rounded-full text-center transition-all transform active:scale-95 focus:outline-none">
+                    class="stat-pill bg-stone-100/50 border border-stone-200 p-2.5 rounded-full text-center transition-all transform active:scale-95 focus:outline-none cursor-pointer">
                     <span class="block text-xs font-extrabold text-rose-700">{{ $overdueTodos->count() }}</span>
                     <span class="block text-[9px] font-bold uppercase tracking-wider text-rose-600 mt-0.5">Overdue</span>
                 </button>
@@ -93,9 +92,9 @@
                             class="todo-card relative backdrop-blur-md rounded-[24px] py-4 pl-4 pr-3 flex items-center justify-between gap-3 shadow-sm transition-all duration-150 transform hover:-translate-y-0.5">
 
                             <div class="flex items-start gap-3 flex-1 min-w-0">
-                                <button
+                                <button type="button"
                                     onclick="openCompleteConfirmModal({{ $todo->id }}, '{{ addslashes($todo->title) }}')"
-                                    class="w-7 h-7 rounded-full border-2 border-white/80 bg-white/20 flex items-center justify-center shrink-0 mt-0.5 transition-transform active:scale-90 hover:bg-white/40">
+                                    class="w-7 h-7 rounded-full border-2 border-white/80 bg-white/20 flex items-center justify-center shrink-0 mt-0.5 transition-transform active:scale-90 hover:bg-white/40 cursor-pointer">
                                     <div class="w-3 h-3 rounded-full bg-transparent hover:bg-white transition-colors"></div>
                                 </button>
 
@@ -173,21 +172,21 @@
                                 </div>
 
                                 <div class="relative">
-                                    <button onclick="toggleCardDropdown(event, 'dropdown-{{ $todo->id }}')"
-                                        class="w-7 h-7 rounded-full bg-white/15 border border-white/20 flex items-center justify-center text-white/80 hover:text-white hover:bg-white/30 transition-all focus:outline-none">
+                                    <button type="button" onclick="toggleCardDropdown(event, 'dropdown-{{ $todo->id }}')"
+                                        class="w-7 h-7 rounded-full bg-white/15 border border-white/20 flex items-center justify-center text-white/80 hover:text-white hover:bg-white/30 transition-all focus:outline-none cursor-pointer">
                                         <span class="material-icons-round text-sm">more_horiz</span>
                                     </button>
 
                                     <div id="dropdown-{{ $todo->id }}"
                                         class="todo-card-dropdown hidden absolute right-0 mt-1 w-24 bg-white/95 backdrop-blur-md border border-stone-200/80 rounded-2xl shadow-lg py-1.5 z-10">
-                                        <button onclick="openEditModal({{ json_encode($todo) }})"
-                                            class="w-full text-left px-3 py-1 text-[11px] font-bold text-stone-700 hover:bg-stone-100 hover:text-blue-600 flex items-center space-x-1.5">
+                                        <button type="button" onclick="openEditModal({{ json_encode($todo) }})"
+                                            class="w-full text-left px-3 py-1 text-[11px] font-bold text-stone-700 hover:bg-stone-100 hover:text-blue-600 flex items-center space-x-1.5 cursor-pointer">
                                             <span class="material-icons-round text-xs">edit</span>
                                             <span>Edit</span>
                                         </button>
-                                        <button
+                                        <button type="button"
                                             onclick="openDeleteConfirmModal({{ $todo->id }}, '{{ addslashes($todo->title) }}')"
-                                            class="w-full text-left px-3 py-1 text-[11px] font-bold text-rose-600 hover:bg-rose-50 flex items-center space-x-1.5">
+                                            class="w-full text-left px-3 py-1 text-[11px] font-bold text-rose-600 hover:bg-rose-50 flex items-center space-x-1.5 cursor-pointer">
                                             <span class="material-icons-round text-xs">delete</span>
                                             <span>Delete</span>
                                         </button>
@@ -212,8 +211,8 @@
 
                 <!-- 4. COMPLETED TASKS ACCORDION -->
                 <div id="completed-section-wrapper" class="pt-2 border-t border-stone-200/60">
-                    <button onclick="toggleCompletedAccordion()"
-                        class="w-full flex items-center justify-between py-2 px-1 text-stone-500 hover:text-stone-800 transition-colors focus:outline-none">
+                    <button type="button" onclick="toggleCompletedAccordion()"
+                        class="w-full flex items-center justify-between py-2 px-1 text-stone-500 hover:text-stone-800 transition-colors focus:outline-none cursor-pointer">
                         <div class="flex items-center space-x-2">
                             <span class="material-icons-round text-sm">check_circle</span>
                             <span class="text-[10px] font-bold uppercase tracking-widest">Completed To-Dos
@@ -244,9 +243,9 @@
                                     </div>
                                 </div>
 
-                                <button
+                                <button type="button"
                                     onclick="openDeleteConfirmModal({{ $todo->id }}, '{{ addslashes($todo->title) }}')"
-                                    class="w-6 h-6 rounded-full hover:bg-rose-50 text-stone-400 hover:text-rose-600 flex items-center justify-center transition-colors">
+                                    class="w-6 h-6 rounded-full hover:bg-rose-50 text-stone-400 hover:text-rose-600 flex items-center justify-center transition-colors cursor-pointer">
                                     <span class="material-icons-round text-xs">delete</span>
                                 </button>
                             </div>
@@ -255,19 +254,6 @@
                                 No completed tasks recorded yet.</p>
                         @endforelse
                     </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ========================================== -->
-        <!-- TAB 2: QUIZ / EXAMS VIEW (HIDDEN BY DEFAULT) -->
-        <!-- ========================================== -->
-        <div id="view-assessments" class="hidden space-y-6">
-            <!-- Asynchronously loaded or embedded assessment container wrapper -->
-            <div id="assessment-container-panel" class="space-y-4">
-                <div class="p-8 text-center border border-dashed border-stone-200 bg-stone-50/40 rounded-3xl">
-                    <span class="material-icons-round text-2xl text-stone-400 animate-spin">sync</span>
-                    <p class="text-xs text-stone-500 font-medium mt-2">Loading your assessments module...</p>
                 </div>
             </div>
         </div>
@@ -285,10 +271,10 @@
             <form id="complete-todo-form" method="POST" class="mt-4 flex items-center justify-center space-x-2.5">
                 @csrf @method('PATCH')
                 <button type="button" onclick="closeCompleteConfirmModal()"
-                    class="w-1/2 py-2 text-[10px] font-bold text-stone-500 bg-stone-50 border border-stone-200 rounded-full">Not
+                    class="w-1/2 py-2 text-[10px] font-bold text-stone-500 bg-stone-50 border border-stone-200 rounded-full cursor-pointer">Not
                     Yet</button>
                 <button type="submit"
-                    class="w-1/2 py-2 text-[10px] font-bold text-white bg-blue-600 rounded-full">Complete</button>
+                    class="w-1/2 py-2 text-[10px] font-bold text-white bg-blue-600 rounded-full cursor-pointer">Complete</button>
             </form>
         </div>
     </div>
@@ -303,10 +289,10 @@
             <form id="delete-todo-form" method="POST" class="mt-4 flex items-center justify-center space-x-2.5">
                 @csrf @method('DELETE')
                 <button type="button" onclick="closeDeleteConfirmModal()"
-                    class="w-1/2 py-2 text-[10px] font-bold text-stone-500 bg-stone-50 border border-stone-200 rounded-full">Keep
+                    class="w-1/2 py-2 text-[10px] font-bold text-stone-500 bg-stone-50 border border-stone-200 rounded-full cursor-pointer">Keep
                     It</button>
                 <button type="submit"
-                    class="w-1/2 py-2 text-[10px] font-bold text-white bg-rose-600 rounded-full">Delete</button>
+                    class="w-1/2 py-2 text-[10px] font-bold text-white bg-rose-600 rounded-full cursor-pointer">Delete</button>
             </form>
         </div>
     </div>
@@ -325,7 +311,7 @@
                     <p class="text-[10px] text-[#78716C] font-medium mt-0.5">Modify your task specifications</p>
                 </div>
                 <button type="button" onclick="closeEditModal()"
-                    class="w-7 h-7 rounded-full bg-stone-100 hover:bg-stone-200/70 flex items-center justify-center text-stone-500 transition">
+                    class="w-7 h-7 rounded-full bg-stone-100 hover:bg-stone-200/70 flex items-center justify-center text-stone-500 transition cursor-pointer">
                     <span class="material-icons-round text-base">close</span>
                 </button>
             </div>
@@ -378,92 +364,33 @@
                 </div>
                 <div class="pt-2 flex items-center space-x-2">
                     <button type="button" onclick="closeEditModal()"
-                        class="flex-1 h-10 rounded-xl border border-stone-200 text-xs font-bold text-stone-600 hover:bg-stone-50 transition">Cancel</button>
+                        class="flex-1 h-10 rounded-xl border border-stone-200 text-xs font-bold text-stone-600 hover:bg-stone-50 transition cursor-pointer">Cancel</button>
                     <button type="submit"
-                        class="flex-1 h-10 rounded-xl bg-[#1C1917] hover:bg-[#2E2925] text-xs font-bold text-white shadow-md transition">Save
+                        class="flex-1 h-10 rounded-xl bg-[#1C1917] hover:bg-[#2E2925] text-xs font-bold text-white shadow-md transition cursor-pointer">Save
                         Changes</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- SCRIPT LOGIC FOR TABS & FUNCTIONALITY -->
+    <!-- SCRIPT LOGIC FOR FILTERING & FUNCTIONALITY -->
     <script>
-        // MAIN TAB SWITCHING CONTROLLER (To-Do vs Quiz/Exams)
-        let assessmentsLoaded = false;
-
-        function switchMainTab(tabName, btnElement) {
-            const viewTodo = document.getElementById('view-todo');
-            const viewAssessments = document.getElementById('view-assessments');
-            const btnTodo = document.getElementById('tab-btn-todo');
-            const btnAssessments = document.getElementById('tab-btn-assessments');
-            const pageTitle = document.getElementById('main-page-title');
-            const pageSubtitle = document.getElementById('main-page-subtitle');
-
-            if (tabName === 'todo') {
-                viewTodo.classList.remove('hidden');
-                viewAssessments.classList.add('hidden');
-
-                btnTodo.className =
-                    "px-4 py-1.5 rounded-full text-xs font-extrabold text-stone-900 bg-white shadow-sm transition-all";
-                btnAssessments.className =
-                    "px-4 py-1.5 rounded-full text-xs font-bold text-stone-500 hover:text-stone-900 transition-all";
-
-                pageTitle.textContent = "To-Do List";
-                pageSubtitle.textContent = "Manage and track your coursework";
-            } else if (tabName === 'assessments') {
-                viewTodo.classList.add('hidden');
-                viewAssessments.classList.remove('hidden');
-
-                btnAssessments.className =
-                    "px-4 py-1.5 rounded-full text-xs font-extrabold text-stone-900 bg-white shadow-sm transition-all";
-                btnTodo.className =
-                    "px-4 py-1.5 rounded-full text-xs font-bold text-stone-500 hover:text-stone-900 transition-all";
-
-                pageTitle.textContent = "Quiz & Exams";
-                pageSubtitle.textContent = "Track upcoming quizzes and exams";
-
-                // Lazy load assessment content via independent controller route if not loaded yet
-                // Inside your Blade script block:
-                if (!assessmentsLoaded) {
-                    fetch("{{ route('assessments.index') }}", {
-                            headers: {
-                                'X-Requested-With': 'XMLHttpRequest'
-                            }
-                        })
-                        .then(response => response.text())
-                        .then(html => {
-                            const parser = new DOMParser();
-                            const doc = parser.parseFromString(html, 'text/html');
-                            const content = doc.querySelector('#assessment-main-content') || doc.body;
-                            document.getElementById('assessment-container-panel').innerHTML = content.innerHTML;
-                            assessmentsLoaded = true;
-                        })
-                        .catch(err => {
-                            console.error("Failed to load assessments:", err);
-                            document.getElementById('assessment-container-panel').innerHTML =
-                                '<p class="text-xs text-rose-600 font-medium text-center py-6">Failed to load assessments content. Please refresh.</p>';
-                        });
-                }
-            }
-        }
-
         // FILTER TASKS FUNCTIONALITY
         function filterTasks(status, pillElement) {
             document.querySelectorAll('.stat-pill').forEach(pill => {
                 pill.className =
-                    "stat-pill bg-stone-100/50 border border-stone-200 p-2.5 rounded-full text-center transition-all transform active:scale-95 focus:outline-none";
+                    "stat-pill bg-stone-100/50 border border-stone-200 p-2.5 rounded-full text-center transition-all transform active:scale-95 focus:outline-none cursor-pointer";
             });
 
             if (status === 'pending') {
                 pillElement.className =
-                    "stat-pill bg-amber-500/10 border-2 border-amber-500/30 p-2.5 rounded-full text-center transition-all transform active:scale-95 focus:outline-none ring-2 ring-amber-500/20";
+                    "stat-pill bg-amber-500/10 border-2 border-amber-500/30 p-2.5 rounded-full text-center transition-all transform active:scale-95 focus:outline-none ring-2 ring-amber-500/20 cursor-pointer";
             } else if (status === 'done') {
                 pillElement.className =
-                    "stat-pill bg-emerald-500/10 border-2 border-emerald-500/30 p-2.5 rounded-full text-center transition-all transform active:scale-95 focus:outline-none ring-2 ring-emerald-500/20";
+                    "stat-pill bg-emerald-500/10 border-2 border-emerald-500/30 p-2.5 rounded-full text-center transition-all transform active:scale-95 focus:outline-none ring-2 ring-emerald-500/20 cursor-pointer";
             } else if (status === 'overdue') {
                 pillElement.className =
-                    "stat-pill bg-rose-500/10 border-2 border-rose-500/30 p-2.5 rounded-full text-center transition-all transform active:scale-95 focus:outline-none ring-2 ring-rose-500/20";
+                    "stat-pill bg-rose-500/10 border-2 border-rose-500/30 p-2.5 rounded-full text-center transition-all transform active:scale-95 focus:outline-none ring-2 ring-rose-500/20 cursor-pointer";
             }
 
             const activeSection = document.getElementById('active-tasks-section');
