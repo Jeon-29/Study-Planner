@@ -13,16 +13,22 @@ class AssessmentController extends Controller
         $today = now()->toDateString();
         $userId = Auth::id(); // Using our custom auth setup
 
-        // 1. The Daily Snapshot (Stat Cards)
-        $todayQuizzes = Assessment::where('user_id', $userId)
+        // 1. Fetching Collections for the view and counts for stat cards
+        $todayQuizzesCollection = Assessment::with('subject')
+            ->where('user_id', $userId)
             ->where('type', 'quiz')
             ->whereDate('assessment_date', $today)
-            ->count();
+            ->get();
 
-        $todayExams = Assessment::where('user_id', $userId)
+        $todayExamsCollection = Assessment::with('subject')
+            ->where('user_id', $userId)
             ->where('type', 'exam')
             ->whereDate('assessment_date', $today)
-            ->count();
+            ->get();
+
+        // Numeric counts for stat widgets if needed separately
+        $todayQuizzes = $todayQuizzesCollection->count();
+        $todayExams = $todayExamsCollection->count();
 
         // 2. Fetching & Grouping Quizzes
         // We eager load 'subject' to avoid the N+1 query problem
@@ -44,27 +50,28 @@ class AssessmentController extends Controller
 
         $subjects = \App\Models\Subject::where('user_id', Auth::id())->get();
 
-        return view('assessments.index', compact('todayQuizzes', 'todayExams', 'quizzes', 'exams', 'subjects'));
+        // Fixed folder path from 'assessments.index' to 'assessment.index' to match your view directory
+        return view('assessment.index', compact('todayQuizzes', 'todayExams', 'quizzes', 'exams', 'subjects'));
     }
 
     public function store(Request $request)
-{
-    $validated = $request->validate([
-        'title'           => 'required|string|max:255',
-        'subject_id'      => 'required|exists:subjects,id',
-        'type'            => 'required|in:quiz,exam',
-        'status'          => 'required|in:upcoming,finished,overdue',
-        'assessment_date' => 'required|date',
-        'start_time'      => 'nullable',
-        'room'            => 'nullable|string|max:255',
-        'total_items'     => 'required|integer|min:1',
-        'score'           => 'nullable|integer|min:0',
-    ]);
+    {
+        $validated = $request->validate([
+            'title'           => 'required|string|max:255',
+            'subject_id'      => 'required|exists:subjects,id',
+            'type'            => 'required|in:quiz,exam',
+            'status'          => 'required|in:upcoming,finished,overdue',
+            'assessment_date' => 'required|date',
+            'start_time'      => 'nullable',
+            'room'            => 'nullable|string|max:255',
+            'total_items'     => 'required|integer|min:1',
+            'score'           => 'nullable|integer|min:0',
+        ]);
 
-    $validated['user_id'] = Auth::id();
+        $validated['user_id'] = Auth::id();
 
-    Assessment::create($validated);
+        Assessment::create($validated);
 
-    return redirect()->route('assessments.index')->with('success', 'Assessment added successfully!');
-}
+        return redirect()->route('assessment.index')->with('success', 'Assessment added successfully!');
+    }
 }
