@@ -29,6 +29,10 @@ class AppServiceProvider extends ServiceProvider
             } else {
                 $view->with('globalSubjects', collect());
             }
+        View::composer('todo.index', function ($view) {
+        $todayQuizzes = Quiz::whereDate('date_column', Carbon::today())->get();
+        $view->with('todayQuizzes', $todayQuizzes);
+    });
         });
 
         if (app()->environment('local')) {
