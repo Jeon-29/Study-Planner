@@ -421,7 +421,7 @@
                     "px-4 py-1.5 rounded-full text-xs font-bold text-stone-500 hover:text-stone-900 transition-all";
 
                 pageTitle.textContent = "Quiz & Exams";
-                pageSubtitle.textContent = "Track upcoming quizzes, exams, and test metrics";
+                pageSubtitle.textContent = "Track upcoming quizzes and exams";
 
                 // Lazy load assessment content via independent controller route if not loaded yet
                 // Inside your Blade script block:
