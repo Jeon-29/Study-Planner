@@ -69,11 +69,18 @@ class AssessmentController extends Controller
             'total_items' => 'required|integer|min:1',
         ]);
 
-        $validated['user_id'] = Auth::id();
-        $validated['status'] = 'upcoming';
-        $validated['score'] = null;
-
-        Assessment::create($validated);
+        $assessment = new Assessment();
+        $assessment->user_id = Auth::id();
+        $assessment->title = $validated['title'];
+        $assessment->subject_id = $validated['subject_id'];
+        $assessment->type = $validated['type'];
+        $assessment->assessment_date = $validated['assessment_date'];
+        $assessment->start_time = $validated['start_time'] ?? null;
+        $assessment->room = $validated['room'] ?? null;
+        $assessment->total_items = $validated['total_items'];
+        $assessment->status = 'upcoming';
+        $assessment->score = null;
+        $assessment->save();
 
         return redirect()->route('assessments.index')->with('success', 'Assessment added successfully!');
     }
