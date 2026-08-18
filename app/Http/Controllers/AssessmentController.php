@@ -11,9 +11,9 @@ class AssessmentController extends Controller
     public function index(Request $request)
     {
         $today = now()->toDateString();
-        $userId = Auth::id(); // Using our custom auth setup
+        $userId = Auth::id(); // Utilizing custom auth logic
 
-        // 1. The Daily Snapshot (Stat Cards - renamed to avoid collision)
+        // 1. The Daily Snapshot (Stat Cards)
         $todayQuizzesCount = Assessment::where('user_id', $userId)
             ->where('type', 'quiz')
             ->whereDate('assessment_date', $today)
@@ -49,7 +49,6 @@ class AssessmentController extends Controller
 
         $subjects = \App\Models\Subject::where('user_id', Auth::id())->get();
 
-        // Return a partial view when requested asynchronously via the tab switcher fetch call
         if ($request->ajax()) {
             return view('assessments.index', compact(
                 'todayQuizzesCount',
@@ -73,22 +72,43 @@ class AssessmentController extends Controller
 
     public function store(Request $request)
     {
+        // Removed status and score from validation; user only inputs core details.
         $validated = $request->validate([
             'title'           => 'required|string|max:255',
             'subject_id'      => 'required|exists:subjects,id',
             'type'            => 'required|in:quiz,exam',
-            'status'          => 'required|in:upcoming,finished,overdue',
             'assessment_date' => 'required|date',
             'start_time'      => 'nullable',
             'room'            => 'nullable|string|max:255',
             'total_items'     => 'required|integer|min:1',
-            'score'           => 'nullable|integer|min:0',
         ]);
 
         $validated['user_id'] = Auth::id();
+        $validated['status']  = 'upcoming'; // Default state on creation
+        $validated['score']   = null;       // Default score on creation
 
         Assessment::create($validated);
 
         return redirect()->route('assessments.index')->with('success', 'Assessment added successfully!');
+    }
+
+    public function markAsDone(Request $request, Assessment $assessment)
+    {
+        // Security check: ensure the user owns this assessment
+        if ($assessment->user_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        // Validate that the score is an integer and does not exceed the total items
+        $validated = $request->validate([
+            'score' => 'required|integer|min:0|max:' . $assessment->total_items,
+        ]);
+
+        $assessment->update([
+            'score'  => $validated['score'],
+            'status' => 'finished'
+        ]);
+
+        return redirect()->back()->with('success', 'Assessment marked as finished!');
     }
 }
