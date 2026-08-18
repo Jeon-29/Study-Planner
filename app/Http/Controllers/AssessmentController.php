@@ -65,10 +65,11 @@ class AssessmentController extends Controller
             'total_items' => 'required|integer|min:1',
         ]);
 
+        // Explicitly instantiate to guarantee no database field defaults are missed
         $assessment = new Assessment();
         $assessment->user_id = Auth::id();
-        $assessment->title = $validated['title'];
         $assessment->subject_id = $validated['subject_id'];
+        $assessment->title = $validated['title'];
         $assessment->type = $validated['type'];
         $assessment->assessment_date = $validated['assessment_date'];
         $assessment->start_time = $validated['start_time'] ?? null;
@@ -94,10 +95,9 @@ class AssessmentController extends Controller
             'score' => 'required|integer|min:0|max:' . $maxItems,
         ]);
 
-        $assessment->update([
-            'score' => $validated['score'],
-            'status' => 'finished',
-        ]);
+        $assessment->score = $validated['score'];
+        $assessment->status = 'finished';
+        $assessment->save();
 
         return redirect()->back()->with('success', 'Assessment marked as finished!');
     }

@@ -34,21 +34,28 @@
 </div>
 
 <script>
-    function openScoreModal(id, totalItems) {
-        const modal = document.getElementById('score-modal');
-        const form = document.getElementById('score-form');
-        const totalLabel = document.getElementById('total-items-label');
-        const scoreInput = document.getElementById('score-input');
+    if (typeof window.openScoreModal !== 'function') {
+        window.openScoreModal = function(id, totalItems) {
+            const modal = document.getElementById('score-modal');
+            const form = document.getElementById('score-form');
+            const totalLabel = document.getElementById('total-items-label');
+            const scoreInput = document.getElementById('score-input');
 
-        form.action = `/assessments/${id}/mark-as-done`;
-        totalLabel.textContent = `/ ${totalItems}`;
-        scoreInput.max = totalItems;
-        scoreInput.value = '';
+            if (!modal || !form || !totalLabel || !scoreInput) return;
 
-        modal.classList.remove('hidden');
+            form.action = `/assessments/${id}/mark-as-done`;
+            totalLabel.textContent = `/ ${totalItems}`;
+            scoreInput.max = totalItems;
+            scoreInput.value = '';
+
+            modal.classList.remove('hidden');
+        }
     }
 
-    function closeScoreModal() {
-        document.getElementById('score-modal').classList.add('hidden');
+    if (typeof window.closeScoreModal !== 'function') {
+        window.closeScoreModal = function() {
+            const modal = document.getElementById('score-modal');
+            if (modal) modal.classList.add('hidden');
+        }
     }
 </script>
