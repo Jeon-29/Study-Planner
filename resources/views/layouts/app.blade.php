@@ -136,14 +136,6 @@
                 <span class="text-xs font-semibold tracking-wide">To-Do</span>
             </button>
 
-            <button onclick="window.location.href='{{ route('assessments.index') }}'"
-                class="w-full flex items-center space-x-3 p-2.5 rounded-xl hover:bg-emerald-50/60 text-[#1C1917] transition-all group">
-                <div
-                    class="w-8 h-8 rounded-lg bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600">
-                    <span class="material-icons-round text-lg">quiz</span>
-                </div>
-                <span class="text-xs font-semibold tracking-wide">Exam / Quiz</span>
-            </button>
         </div>
     </div>
 
@@ -538,18 +530,12 @@
                 <span class="text-[9px] tracking-wide mt-0.5">Subjects</span>
             </a>
 
+            <!-- 5. Tasks Hub (Combines To-Do & Assessments) -->
             <a href="{{ route('todo.index') }}"
-                class="flex flex-col items-center justify-center flex-1 h-12 rounded-2xl transition-all {{ request()->routeIs('todo.index') ? 'text-[#DB2777] font-semibold' : 'text-[#78716C] hover:text-[#1C1917]' }}">
+                class="flex flex-col items-center justify-center flex-1 h-12 rounded-2xl transition-all {{ request()->routeIs('todo.index') || request()->routeIs('assessments.index') ? 'text-[#DB2777] font-semibold' : 'text-[#78716C] hover:text-[#1C1917]' }}">
                 <span
-                    class="material-icons-round text-xl {{ request()->routeIs('todo.index') ? 'filter drop-shadow-sm' : '' }}">assignment_turned_in</span>
-                <span class="text-[9px] tracking-wide mt-0.5">To-Do</span>
-            </a>
-
-            <a href="{{ route('assessments.index') }}"
-                class="flex flex-col items-center justify-center flex-1 h-12 rounded-2xl transition-all {{ request()->routeIs('assessments.index') ? 'text-[#DB2777] font-semibold' : 'text-[#78716C] hover:text-[#1C1917]' }}">
-                <span
-                    class="material-icons-round text-xl {{ request()->routeIs('assessments.index') ? 'filter drop-shadow-sm' : '' }}">quiz</span>
-                <span class="text-[9px] tracking-wide mt-0.5">Exams</span>
+                    class="material-icons-round text-xl {{ request()->routeIs('todo.index') || request()->routeIs('assessments.index') ? 'filter drop-shadow-sm' : '' }}">task</span>
+                <span class="text-[9px] tracking-wide mt-0.5">Task</span>
             </a>
 
         </div>
