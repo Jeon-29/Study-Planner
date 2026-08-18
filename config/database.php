@@ -59,10 +59,10 @@ return [
             'prefix_indexes' => true,
             'strict' => true,
             'engine' => null,
-            'options' => extension_loaded('pdo_mysql') ? array_filter([
-    // Added a fallback to '/etc/ssl/cert.pem' just in case the .env fails to load
-    \Pdo\Mysql::ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA', '/etc/ssl/cert.pem'),
-]) : [],
+            'options' => [
+                // This line enables SSL/TLS for TiDB
+                PDO::MYSQL_ATTR_SSL_CA => '/etc/ssl/certs/ca-certificates.crt',
+            ],
         ],
 
         'mariadb' => [
