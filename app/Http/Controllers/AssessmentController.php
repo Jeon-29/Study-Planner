@@ -111,4 +111,11 @@ class AssessmentController extends Controller
 
         return redirect()->back()->with('success', 'Assessment marked as finished!');
     }
+
+    public function destroy(Assessment $assessment)
+    {
+        $assessment->delete();
+
+        return redirect()->back()->with('success', 'Assessment deleted successfully!');
+    }
 }
