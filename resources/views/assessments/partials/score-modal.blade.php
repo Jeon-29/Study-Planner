@@ -1,61 +1,78 @@
-<div id="score-modal" class="fixed inset-0 bg-stone-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="absolute inset-0 cursor-pointer" onclick="closeScoreModal()"></div>
-    <div class="relative z-10 bg-white w-full max-w-xs rounded-[32px] p-6 shadow-2xl border border-white/80 text-center transform transition-all">
+<div id="score-modal" class="fixed inset-0 bg-stone-900/40 backdrop-blur-sm z-50 flex items-center justify-center px-4 hidden">
+    <div class="absolute inset-0 pointer-events-auto" onclick="closeScoreModal()"></div>
+    <div id="score-modal-card" class="relative z-50 bg-white w-full max-w-xs rounded-[32px] p-6 shadow-2xl transform transition-all scale-95 opacity-0 pointer-events-auto">
 
-        <div class="w-12 h-12 rounded-2xl bg-pink-50 border border-pink-100 flex items-center justify-center text-[#DB2777] mx-auto mb-3 shadow-inner">
-            <span class="material-icons-round text-xl">military_tech</span>
-        </div>
+        <h3 class="text-lg font-black text-stone-800 mb-2 text-center">Assessment Complete!</h3>
+        <p class="text-xs text-stone-500 font-bold text-center mb-4">What was your score?</p>
 
-        <h3 class="text-base font-black text-stone-900 tracking-tight mb-1">Complete Exam/Quiz</h3>
-        <p class="text-xs text-stone-400 font-bold mb-5">Enter your score for this item</p>
-
-        <form id="score-form" method="POST" class="space-y-4">
+        <form id="score-form" method="POST" onsubmit="handleScoreSubmit(event)">
             @csrf
             @method('PATCH')
 
-            <div class="flex justify-center">
-                <div class="relative w-40">
-                    <input type="number" name="score" id="score-input" required min="0" placeholder="0"
-                        class="w-full text-center py-3 rounded-2xl bg-stone-50 border border-stone-200 text-lg font-black text-stone-800 focus:outline-none focus:border-pink-500 transition-all">
-                    <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-stone-400 pointer-events-none" id="total-items-label">/ 10</span>
-                </div>
+            <input type="hidden" id="max_items" value="">
+
+            <div class="flex items-center justify-center gap-2 mb-6">
+                <input type="number" name="score" id="earned_score" required min="0" class="w-20 px-3 py-2 text-center rounded-xl bg-stone-50 border border-stone-200 text-lg font-black text-stone-800 focus:outline-none focus:border-[#DB2777]">
+                <span class="text-stone-400 font-bold text-lg">/</span>
+                <span id="display_max_items" class="text-stone-800 font-black text-lg">0</span>
             </div>
 
-            <div class="grid grid-cols-2 gap-3 pt-2">
-                <button type="button" onclick="closeScoreModal()" class="py-3 rounded-full border border-stone-200 text-stone-700 text-xs font-bold hover:bg-stone-50 transition-all cursor-pointer">
-                    Cancel
-                </button>
-                <button type="submit" class="py-3 rounded-full bg-[#DB2777] hover:bg-[#BE185D] text-white text-xs font-extrabold shadow-lg shadow-pink-200 transition-all cursor-pointer">
-                    Save Score
-                </button>
-            </div>
+            <button type="submit" class="w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-extrabold rounded-xl shadow-lg shadow-emerald-200 transition-all cursor-pointer flex items-center justify-center gap-2">
+                <span class="material-icons-round text-[16px]">check_circle</span>
+                Confirm & Mark Done
+            </button>
         </form>
     </div>
 </div>
 
 <script>
-    if (typeof window.openScoreModal !== 'function') {
-        window.openScoreModal = function(id, totalItems) {
-            const modal = document.getElementById('score-modal');
-            const form = document.getElementById('score-form');
-            const totalLabel = document.getElementById('total-items-label');
-            const scoreInput = document.getElementById('score-input');
+    function openScoreModal(assessmentId, totalItems) {
+        const modal = document.getElementById('score-modal');
+        const card = document.getElementById('score-modal-card');
+        const form = document.getElementById('score-form');
 
-            if (!modal || !form || !totalLabel || !scoreInput) return;
+        // Dynamically point the form to the specific assessment's update route
+        form.action = `/assessments/${assessmentId}/mark-done`;
 
-            form.action = `/assessments/${id}/mark-as-done`;
-            totalLabel.textContent = `/ ${totalItems}`;
-            scoreInput.max = totalItems;
-            scoreInput.value = '';
+        document.getElementById('max_items').value = totalItems;
+        document.getElementById('display_max_items').innerText = totalItems;
 
-            modal.classList.remove('hidden');
-        }
+        // Add dynamic max attribute to input to prevent HTML validation errors
+        document.getElementById('earned_score').setAttribute('max', totalItems);
+
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            card.classList.remove('scale-95', 'opacity-0');
+            card.classList.add('scale-100', 'opacity-100');
+        }, 10);
     }
 
-    if (typeof window.closeScoreModal !== 'function') {
-        window.closeScoreModal = function() {
-            const modal = document.getElementById('score-modal');
-            if (modal) modal.classList.add('hidden');
+    function closeScoreModal() {
+        const modal = document.getElementById('score-modal');
+        const card = document.getElementById('score-modal-card');
+        card.classList.remove('scale-100', 'opacity-100');
+        card.classList.add('scale-95', 'opacity-0');
+        setTimeout(() => modal.classList.add('hidden'), 300);
+    }
+
+    function handleScoreSubmit(event) {
+        event.preventDefault();
+
+        const score = parseFloat(document.getElementById('earned_score').value);
+        const max = parseFloat(document.getElementById('max_items').value);
+        const percentage = (score / max) * 100;
+
+        let message = "";
+        if (percentage >= 90) {
+            message = "Excellent work! You crushed it!";
+        } else if (percentage >= 75) {
+            message = "Good job! Solid passing score.";
+        } else {
+            message = "Keep studying, you'll get it next time!";
         }
+
+        alert(`You scored ${percentage.toFixed(0)}%\n\n${message}`);
+
+        document.getElementById('score-form').submit();
     }
 </script>
