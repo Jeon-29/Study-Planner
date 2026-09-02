@@ -206,19 +206,18 @@
         @include('assessments.partials.add-modal')
         @include('assessments.partials.score-modal')
 
-        <!-- CUSTOM RESULT MODAL -->
+        <!-- CUSTOM RESULT MODAL (Matches Score Greetings UI) -->
         <div id="custom-result-modal" class="fixed inset-0 z-50 bg-stone-900/40 backdrop-blur-xs flex items-center justify-center p-4 hidden">
-            <div class="bg-white rounded-[28px] max-w-xs w-full p-6 shadow-2xl border border-stone-100 text-center space-y-4 animate-in fade-in zoom-in duration-200">
-                <div class="w-12 h-12 bg-pink-50 text-pink-600 rounded-2xl mx-auto flex items-center justify-center border border-pink-100 shadow-xs">
-                    <span class="material-icons-round text-2xl">insights</span>
+            <div class="bg-white rounded-[28px] max-w-sm w-full shadow-2xl border border-stone-100 overflow-hidden animate-in fade-in zoom-in duration-200 text-left">
+                <div class="p-6 space-y-1">
+                    <h3 id="result-modal-title" class="text-sm font-black text-stone-800">You scored 0%</h3>
+                    <p id="result-modal-message" class="text-xs font-medium text-stone-500">Keep studying, you'll get it next time!</p>
                 </div>
-                <div>
-                    <h3 id="result-modal-title" class="text-base font-black text-stone-800">You scored 0%</h3>
-                    <p id="result-modal-message" class="text-xs font-medium text-stone-500 mt-1">Keep studying, you'll get it next time!</p>
+                <div class="border-t border-stone-100 px-6 py-3.5 flex justify-end">
+                    <button type="button" onclick="closeCustomResultModal()" class="px-4 py-1.5 rounded-full text-xs font-bold text-pink-600 border border-pink-300 hover:bg-pink-50 transition-all cursor-pointer">
+                        Close
+                    </button>
                 </div>
-                <button type="button" onclick="closeCustomResultModal()" class="w-full bg-[#DB2777] hover:bg-[#BE185D] text-white text-xs font-bold py-2.5 rounded-full shadow-md transition-all cursor-pointer">
-                    Close
-                </button>
             </div>
         </div>
 
