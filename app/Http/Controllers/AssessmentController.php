@@ -13,15 +13,15 @@ class AssessmentController extends Controller
         $today = now()->toDateString();
         $userId = Auth::id(); // Utilizing custom auth logic
 
-        // 1. The Daily Snapshot (Stat Cards)
-        $todayQuizzesCount = Assessment::where('user_id', $userId)
+        // 1. Upcoming Assessment Snapshot (Stat Cards)
+        $upcomingQuizzesCount = Assessment::where('user_id', $userId)
             ->where('type', 'quiz')
-            ->whereDate('assessment_date', $today)
+            ->where('status', 'upcoming')
             ->count();
 
-        $todayExamsCount = Assessment::where('user_id', $userId)
+        $upcomingExamsCount = Assessment::where('user_id', $userId)
             ->where('type', 'exam')
-            ->whereDate('assessment_date', $today)
+            ->where('status', 'upcoming')
             ->count();
 
         // 2. Actual collection of today's quizzes for listing/iteration
@@ -51,8 +51,8 @@ class AssessmentController extends Controller
 
         if ($request->ajax()) {
             return view('assessments.index', compact(
-                'todayQuizzesCount',
-                'todayExamsCount',
+                'upcomingQuizzesCount',
+                'upcomingExamsCount',
                 'todayQuizzes',
                 'quizzes',
                 'exams',
@@ -61,8 +61,8 @@ class AssessmentController extends Controller
         }
 
         return view('assessments.index', compact(
-            'todayQuizzesCount',
-            'todayExamsCount',
+            'upcomingQuizzesCount',
+            'upcomingExamsCount',
             'todayQuizzes',
             'quizzes',
             'exams',
@@ -72,7 +72,7 @@ class AssessmentController extends Controller
 
     public function store(Request $request)
     {
-        // Removed status and score from validation; user only inputs core details.
+        // Removed status and score from validation; user only inputs core details.[cite: 13]
         $validated = $request->validate([
             'title'           => 'required|string|max:255',
             'subject_id'      => 'required|exists:subjects,id',
@@ -84,8 +84,8 @@ class AssessmentController extends Controller
         ]);
 
         $validated['user_id'] = Auth::id();
-        $validated['status']  = 'upcoming'; // Default state on creation
-        $validated['score']   = null;       // Default score on creation
+        $validated['status']  = 'upcoming'; // Default state on creation[cite: 13]
+        $validated['score']   = null;       // Default score on creation[cite: 13]
 
         Assessment::create($validated);
 
@@ -94,12 +94,12 @@ class AssessmentController extends Controller
 
     public function markAsDone(Request $request, Assessment $assessment)
     {
-        // Security check: ensure the user owns this assessment
+        // Security check: ensure the user owns this assessment[cite: 13]
         if ($assessment->user_id !== Auth::id()) {
             abort(403, 'Unauthorized action.');
         }
 
-        // Validate that the score is an integer and does not exceed the total items
+        // Validate that the score is an integer and does not exceed the total items[cite: 13]
         $validated = $request->validate([
             'score' => 'required|integer|min:0|max:' . $assessment->total_items,
         ]);

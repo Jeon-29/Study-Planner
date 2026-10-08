@@ -29,6 +29,7 @@
                 </button>
             </div>
 
+            <!-- STAT CARDS: COUNTING ALL UPCOMING QUIZZES AND EXAMS -->
             <div class="grid grid-cols-2 gap-3 mb-5">
                 <div class="relative py-1.5 px-3 rounded-[20px] bg-white border border-stone-100 shadow-sm overflow-hidden group flex items-center gap-3">
                     <div class="absolute -right-4 -top-4 w-12 h-12 bg-amber-100/80 rounded-full blur-xl group-hover:bg-amber-200 transition-colors"></div>
@@ -36,8 +37,8 @@
                         <span class="material-icons-round text-sm">quiz</span>
                     </div>
                     <div class="relative z-10 flex flex-col justify-center">
-                        <span class="text-xl font-black text-stone-800 leading-tight">{{ $todayQuizzesCount }}</span>
-                        <span class="text-[10px] font-bold text-stone-400">Quizzes Today</span>
+                        <span class="text-xl font-black text-stone-800 leading-tight">{{ $upcomingQuizzesCount }}</span>
+                        <span class="text-[10px] font-bold text-stone-400">Upcoming Quizzes</span>
                     </div>
                 </div>
 
@@ -47,8 +48,8 @@
                         <span class="material-icons-round text-sm">school</span>
                     </div>
                     <div class="relative z-10 flex flex-col justify-center">
-                        <span class="text-xl font-black text-stone-800 leading-tight">{{ $todayExamsCount }}</span>
-                        <span class="text-[10px] font-bold text-stone-400">Exams Today</span>
+                        <span class="text-xl font-black text-stone-800 leading-tight">{{ $upcomingExamsCount }}</span>
+                        <span class="text-[10px] font-bold text-stone-400">Upcoming Exams</span>
                     </div>
                 </div>
             </div>
@@ -72,7 +73,7 @@
 
                 @foreach (['upcoming', 'finished', 'overdue'] as $status)
                     <div id="quiz-list-{{ $status }}" class="quiz-sub-list space-y-3 {{ $status !== 'upcoming' ? 'hidden' : '' }}">
-                        @forelse($quizzes->get($status, []) as $quiz)
+                        @forelse ($quizzes ->get ($status, []) as $quiz)
                             <div class="p-4 rounded-[24px] bg-white border border-stone-100 shadow-sm hover:shadow-md transition-all relative overflow-hidden">
                                 <div class="flex justify-between items-start mb-3">
                                     <div>
@@ -102,14 +103,14 @@
                                     </div>
 
                                     @if($status === 'upcoming')
-                                        <button type="button" onclick="openScoreModal({{ $quiz->id }}, {{ $quiz->total_items }})" class="text-[10px] font-bold bg-[#DB2777] text-white px-3 py-1.5 rounded-full shadow-md hover:bg-[#BE185D] transition-all flex items-center gap-1">
+                                        <button type="button" onclick="openScoreModal({{ $quiz->id }}, {{$quiz->total_items }})" class="text-[10px] font-bold bg-[#DB2777] text-white px-3 py-1.5 rounded-full shadow-md hover:bg-[#BE185D] transition-all flex items-center gap-1">
                                             <span class="material-icons-round text-[14px]">check_circle</span>
                                             Mark as Done
                                         </button>
                                     @else
                                         <div class="flex items-center gap-1 bg-amber-50 px-3 py-1 rounded-full border border-amber-100">
                                             <span class="material-icons-round text-sm text-amber-500">grade</span>
-                                            <span class="font-bold text-amber-800">Score: {{ $quiz->score !== null ? $quiz->score . '/' . $quiz->total_items : 'Not Graded' }}</span>
+                                            <span class="font-bold text-amber-800">Score: {{ $quiz->score !== null ? $quiz->score . '/' .$quiz->total_items : 'Not Graded' }}</span>
                                         </div>
                                     @endif
                                 </div>
@@ -134,7 +135,7 @@
 
                 @foreach (['upcoming', 'finished', 'overdue'] as $status)
                     <div id="exam-list-{{ $status }}" class="exam-sub-list space-y-3 {{ $status !== 'upcoming' ? 'hidden' : '' }}">
-                        @forelse($exams->get($status, []) as $exam)
+                        @forelse ($exams ->get ($status, []) as $exam)
                             <div class="p-4 rounded-[24px] bg-white border border-stone-100 shadow-sm hover:shadow-md transition-all relative">
                                 <div class="flex justify-between items-start mb-2">
                                     <div>
@@ -179,14 +180,14 @@
                                     </div>
 
                                     @if($status === 'upcoming')
-                                        <button type="button" onclick="openScoreModal({{ $exam->id }}, {{ $exam->total_items }})" class="text-[10px] font-bold bg-purple-600 text-white px-3 py-1.5 rounded-full shadow-md hover:bg-purple-700 transition-all flex items-center gap-1">
+                                        <button type="button" onclick="openScoreModal({{ $exam->id }}, {{$exam->total_items }})" class="text-[10px] font-bold bg-purple-600 text-white px-3 py-1.5 rounded-full shadow-md hover:bg-purple-700 transition-all flex items-center gap-1">
                                             <span class="material-icons-round text-[14px]">check_circle</span>
                                             Mark as Done
                                         </button>
                                     @else
                                         <div class="flex items-center gap-1 bg-amber-50 px-3 py-1 rounded-full border border-amber-100">
                                             <span class="material-icons-round text-sm text-amber-500">grade</span>
-                                            <span class="font-bold text-amber-800">Score: {{ $exam->score !== null ? $exam->score . '/' . $exam->total_items : 'Pending' }}</span>
+                                            <span class="font-bold text-amber-800">Score: {{ $exam->score !== null ? $exam->score . '/' .$exam->total_items : 'Pending' }}</span>
                                         </div>
                                     @endif
                                 </div>
@@ -206,16 +207,19 @@
         @include('assessments.partials.add-modal')
         @include('assessments.partials.score-modal')
 
-        <!-- CUSTOM RESULT MODAL (Matches Score Greetings UI) -->
+        <!-- CUSTOM RESULT MODAL (Refined & styled score popup) -->
         <div id="custom-result-modal" class="fixed inset-0 z-50 bg-stone-900/40 backdrop-blur-xs flex items-center justify-center p-4 hidden">
-            <div class="bg-white rounded-[28px] max-w-sm w-full shadow-2xl border border-stone-100 overflow-hidden animate-in fade-in zoom-in duration-200 text-left">
-                <div class="p-6 space-y-1">
-                    <h3 id="result-modal-title" class="text-sm font-black text-stone-800">You scored 0%</h3>
-                    <p id="result-modal-message" class="text-xs font-medium text-stone-500">Keep studying, you'll get it next time!</p>
+            <div class="bg-white rounded-[28px] max-w-xs w-full p-6 shadow-2xl border border-stone-100 text-center space-y-4 animate-in fade-in zoom-in duration-200">
+                <div id="result-modal-icon-bg" class="w-12 h-12 rounded-2xl mx-auto flex items-center justify-center shadow-xs">
+                    <span id="result-modal-icon" class="material-icons-round text-2xl">emoji_events</span>
                 </div>
-                <div class="border-t border-stone-100 px-6 py-3.5 flex justify-end">
-                    <button type="button" onclick="closeCustomResultModal()" class="px-4 py-1.5 rounded-full text-xs font-bold text-pink-600 border border-pink-300 hover:bg-pink-50 transition-all cursor-pointer">
-                        Close
+                <div>
+                    <h3 id="result-modal-title" class="text-lg font-black text-stone-800 tracking-tight">You scored 0%</h3>
+                    <p id="result-modal-message" class="text-xs font-medium text-stone-500 mt-1">Keep studying, you'll get it next time!</p>
+                </div>
+                <div class="pt-2">
+                    <button type="button" id="result-modal-close-btn" onclick="submitScoreFormAndCloseModal()" class="w-full bg-[#DB2777] hover:bg-[#BE185D] text-white text-xs font-bold py-2.5 rounded-full shadow-md shadow-pink-200 transition-all cursor-pointer">
+                        Continue
                     </button>
                 </div>
             </div>
@@ -289,23 +293,49 @@
             }
         }
 
-        // Functions to control the custom result modal
-        function showCustomResultModal(percentage, message) {
+        // Variable to hold score form reference before modal submission
+        let pendingScoreForm = null;
+
+        // Functions to control custom score result modal
+        function showCustomResultModal(percentage, message, targetForm = null) {
+            pendingScoreForm = targetForm;
             const modal = document.getElementById('custom-result-modal');
             const title = document.getElementById('result-modal-title');
             const desc = document.getElementById('result-modal-message');
+            const iconBg = document.getElementById('result-modal-icon-bg');
+            const icon = document.getElementById('result-modal-icon');
 
-            if (title) title.innerText = `You scored ${percentage}%`;
+            if (title) title.innerText = `You scored ${percentage}%!`;
             if (desc) desc.innerText = message;
+
+            // Contextual styling based on score range
+            if (iconBg && icon) {
+                if (percentage >= 80) {
+                    iconBg.className = "w-12 h-12 bg-amber-50 text-amber-600 rounded-2xl mx-auto flex items-center justify-center border border-amber-200 shadow-xs";
+                    icon.innerText = "emoji_events";
+                } else if (percentage >= 50) {
+                    iconBg.className = "w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl mx-auto flex items-center justify-center border border-emerald-200 shadow-xs";
+                    icon.innerText = "thumb_up";
+                } else {
+                    iconBg.className = "w-12 h-12 bg-rose-50 text-rose-600 rounded-2xl mx-auto flex items-center justify-center border border-rose-200 shadow-xs";
+                    icon.innerText = "menu_book";
+                }
+            }
+
             if (modal) modal.classList.remove('hidden');
         }
 
-        function closeCustomResultModal() {
+        function submitScoreFormAndCloseModal() {
             const modal = document.getElementById('custom-result-modal');
             if (modal) modal.classList.add('hidden');
+
+            if (pendingScoreForm) {
+                pendingScoreForm.submit();
+                pendingScoreForm = null;
+            }
         }
 
-        // Functions to control the custom delete confirmation modal
+        // Functions to control custom delete confirmation modal
         let deleteFormTarget = null;
 
         function confirmDeleteModal(event, title, formElement) {
